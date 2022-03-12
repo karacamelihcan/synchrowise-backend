@@ -7,7 +7,7 @@ namespace Synchrowise.Contract.Response
 {
     public class ErrorResponse
     {
-        public List<string> Errors { get; private set; }    
+        public List<string> Errors  { get; set; } = new List<string> ();
         public bool IsShow { get; set; }
         public ErrorResponse()
         {
@@ -20,7 +20,7 @@ namespace Synchrowise.Contract.Response
         }
         public ErrorResponse(List<string> errors, bool isShow)
         {
-            Errors = Errors;
+            Errors = errors;
             IsShow = isShow;
         }
     }

@@ -10,7 +10,7 @@ using Synchrowise.Core.Models;
 
 namespace Synchrowise.Services.Services.UserServices
 {
-    public interface IUserService
+    public interface IUserService 
     {
         Task<ApiResponse<UserDto>> GetByIdAsync(Guid Id);
         Task<ApiResponse<IEnumerable<UserDto>>> GetAllAsync();

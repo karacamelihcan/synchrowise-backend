@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Synchrowise.Contract.Response;
 using Synchrowise.Core.Dtos;
 
-namespace Synchrowise.Services.Services.GenericServices
+namespace Synchrowise.Services.Services.BaseServices
 {
-    public interface IGenericService<TEntity,TDto> where TEntity: class where TDto : class
+    public interface IServiceBase<TEntity,TDto> where TEntity: class where TDto : class
     {
         Task<ApiResponse<TDto>> GetByIdAsync(int Id);
         Task<ApiResponse<IEnumerable<TDto>>> GetAllAsync();
@@ -17,7 +17,6 @@ namespace Synchrowise.Services.Services.GenericServices
         Task<ApiResponse<NoDataDto>> Remove(int Id);
         Task<ApiResponse<NoDataDto>> Update(TDto entity,int Id);
         Task<ApiResponse<IEnumerable<TDto>>> AddRangeAsync(IEnumerable<TDto> entities);
-        
-
+    
     }
 }
