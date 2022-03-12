@@ -1,0 +1,4 @@
+{
+    "appService.deploySubpath": "/publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/7814d873-9c37-4097-b764-b6e7e5e7eba6/resourceGroups/synchrowise/providers/Microsoft.Web/sites/synchrowise"
+}
