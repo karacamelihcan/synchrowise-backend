@@ -78,12 +78,17 @@ namespace Synchrowise.Services.Services.UserServices
             throw new NotImplementedException();
         }
 
-        public Task<ApiResponse<UserDto>> GetByIdAsync(Guid Id)
+        public async Task<ApiResponse<UserDto>> GetByIdAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            var user = await _repository.GetByGuidAsync(Id);
+            if(user == null){
+                return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
+            }
+            var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
+            return ApiResponse<UserDto>.Success(userDto,200);
         }
 
-        public Task<ApiResponse<NoDataDto>> Remove(int Id)
+        public Task<ApiResponse<NoDataDto>> Remove(Guid Id)
         {
             throw new NotImplementedException();
         }

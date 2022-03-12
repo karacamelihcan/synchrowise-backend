@@ -11,5 +11,6 @@ namespace Synchrowise.Database.Repositories.UserRepositories
     public interface IUserRepository : IRepositoryBase<User>
     {
         Task<User> IsUserExist(CreateUserRequest request);
+        Task<User> GetByGuidAsync(Guid Id);
     }
 }

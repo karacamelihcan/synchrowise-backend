@@ -18,38 +18,6 @@ namespace Synchrowise.Database.Repositories.UserRepositories
         {
             _context = context;
         }
-        /*
-       
-       public async Task AddRangeAsync(IEnumerable<T> entities)
-       {
-           await _dbSet.AddRangeAsync(entities);
-       }
-
-       public void Delete(T entity)
-       {
-           _dbSet.Remove(entity);
-       }
-
-       public async Task<IEnumerable<T>> GetAll()
-       {
-           return await _dbSet.AsNoTracking().ToListAsync();
-       }
-
-       public async Task<T> GetByIdAsync(int id)
-       {
-           return await _dbSet.FindAsync(id);
-       }
-
-       public void Update(T entity)
-       {
-           _dbSet.Update(entity);
-       }
-
-       public async Task<IQueryable<T>> Where(Expression<Func<T, bool>> expression)
-       {
-           return  _dbSet.Where(expression);
-       }*/
-
         public override async Task AddAsync(User entity)
         {
             await _context.Users.AddAsync(entity);
@@ -68,6 +36,11 @@ namespace Synchrowise.Database.Repositories.UserRepositories
         public override async Task<IEnumerable<User>> GetAll()
         {
             return await _context.Users.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<User> GetByGuidAsync(Guid Id)
+        {
+            return await _context.Users.Where(x => x.Guid == Id && x.isDelete == false).FirstOrDefaultAsync();
         }
 
         public override async Task<User> GetByIdAsync(int id)
