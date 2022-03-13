@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Synchrowise.Contract.Request.User;
 using Synchrowise.Core.Models;
 using Synchrowise.Database.Repositories.BaseRepositories;
-using Microsoft.EntityFrameworkCore;
 namespace Synchrowise.Database.Repositories.UserRepositories
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
@@ -48,10 +47,9 @@ namespace Synchrowise.Database.Repositories.UserRepositories
             return await _context.Users.FindAsync(id);
         }
 
-        public async  Task<User> IsUserExist(CreateUserRequest request)
+        public async  Task<User> IsUserExist(string firebase_ID)
         {
-            return await  _context.Users.Where(x=> x.Firebase_Id == request.Firebase_Id || x.Username == request.Username ||
-                                                      x.Email == request.Email).FirstOrDefaultAsync();
+            return await  _context.Users.Where(x=> x.Firebase_uid == firebase_ID).FirstOrDefaultAsync();
         }
 
         public override void Update(User entity)

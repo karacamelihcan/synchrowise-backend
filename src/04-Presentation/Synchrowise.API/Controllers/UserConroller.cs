@@ -30,5 +30,11 @@ namespace Synchrowise.API.Controllers
             var result = await _service.GetByIdAsync(Id);
             return ActionResultInstance(result);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(UpdateUserRequest request){
+            var result = await _service.Update(request);
+            return ActionResultInstance(result);
+        }
     }
 }
