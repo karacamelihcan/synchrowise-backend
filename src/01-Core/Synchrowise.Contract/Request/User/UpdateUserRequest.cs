@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace Synchrowise.Contract.Request.User
 {
-    public class CreateUserRequest
+    public class UpdateUserRequest
     {
-        public string Firebase_uid { get; set; }
+        public Guid Guid { get; set; }
         public string Firebase_id_token { get; set; }
+        public string Username { get; set; }
         public string Email { get; set; }
         public bool Email_verified { get; set; } 
-        public bool Is_New_user { get; set; }
-        public long Firebase_Creation_Time { get; set; }
+        public string Avatar { get; set; } 
         public long Firebase_Last_Signin_Time { get; set; }
     }
 }

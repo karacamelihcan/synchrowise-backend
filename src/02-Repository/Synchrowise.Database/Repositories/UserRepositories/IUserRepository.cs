@@ -10,7 +10,7 @@ namespace Synchrowise.Database.Repositories.UserRepositories
 {
     public interface IUserRepository : IRepositoryBase<User>
     {
-        Task<User> IsUserExist(CreateUserRequest request);
+        Task<User> IsUserExist(string firebase_ID);
         Task<User> GetByGuidAsync(Guid Id);
     }
 }
