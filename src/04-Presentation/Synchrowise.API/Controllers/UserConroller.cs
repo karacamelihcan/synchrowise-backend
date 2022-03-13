@@ -24,5 +24,11 @@ namespace Synchrowise.API.Controllers
             var result = await _service.AddAsync(request);
             return ActionResultInstance(result);
         }
+
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetUserInfo(Guid Id){
+            var result = await _service.GetByIdAsync(Id);
+            return ActionResultInstance(result);
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace Synchrowise.Services.Services.UserServices
         Task<ApiResponse<IEnumerable<UserDto>>> GetAllAsync();
         Task<ApiResponse<IQueryable<UserDto>>> Where(Expression<Func<User,bool>> predicate);
         Task<ApiResponse<UserDto>> AddAsync(CreateUserRequest request);
-        Task<ApiResponse<NoDataDto>> Remove(int Id);
+        Task<ApiResponse<NoDataDto>> Remove(Guid Id);
         Task<ApiResponse<NoDataDto>> Update(UserDto entity,int Id);
 
     }
