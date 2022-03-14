@@ -29,7 +29,7 @@ namespace Synchrowise.Database.Repositories.UserRepositories
 
         public override void Delete(User entity)
         {
-            _context.Users.Remove(entity);
+            entity.isDelete = true;
         }
 
         public override async Task<IEnumerable<User>> GetAll()
@@ -45,6 +45,11 @@ namespace Synchrowise.Database.Repositories.UserRepositories
         public override async Task<User> GetByIdAsync(int id)
         {
             return await _context.Users.FindAsync(id);
+        }
+
+        public async Task<User> GetUserByFireBaseID(string firebase_ID)
+        {
+            return await _context.Users.Where(x => x.Firebase_uid == firebase_ID ).FirstOrDefaultAsync();
         }
 
         public async  Task<User> IsUserExist(string firebase_ID)

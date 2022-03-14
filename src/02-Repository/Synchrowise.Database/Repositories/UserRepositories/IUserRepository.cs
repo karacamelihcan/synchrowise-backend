@@ -12,5 +12,6 @@ namespace Synchrowise.Database.Repositories.UserRepositories
     {
         Task<User> IsUserExist(string firebase_ID);
         Task<User> GetByGuidAsync(Guid Id);
+        Task<User> GetUserByFireBaseID(string firebase_ID);
     }
 }

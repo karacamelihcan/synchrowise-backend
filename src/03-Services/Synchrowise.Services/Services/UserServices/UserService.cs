@@ -18,13 +18,11 @@ namespace Synchrowise.Services.Services.UserServices
 {
     public class UserService : IUserService
     {
-        private readonly SynchrowiseDbContext _context;
         private readonly IUserRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(SynchrowiseDbContext context, IUserRepository repository, IUnitOfWork unitOfWork)
+        public UserService(IUserRepository repository, IUnitOfWork unitOfWork)
         {
-            _context = context;
             _repository = repository;
             _unitOfWork = unitOfWork;
         }
@@ -75,17 +73,54 @@ namespace Synchrowise.Services.Services.UserServices
 
         public async Task<ApiResponse<UserDto>> GetByIdAsync(Guid Id)
         {
-            var user = await _repository.GetByGuidAsync(Id);
-            if(user == null){
-                return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
+            try
+            {
+                var user = await _repository.GetByGuidAsync(Id);
+                if(user == null){
+                    return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
+                }
+                var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
+                return ApiResponse<UserDto>.Success(userDto,200);
             }
-            var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
-            return ApiResponse<UserDto>.Success(userDto,200);
+            catch (System.Exception ex)
+            {
+                return ApiResponse<UserDto>.Fail(ex.Message,500,true);
+            }
         }
 
-        public Task<ApiResponse<NoDataDto>> Remove(Guid Id)
+        public async Task<ApiResponse<UserDto>> GetUserByFirebaseID(string firebase_ID)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _repository.GetUserByFireBaseID(firebase_ID);
+                if(user == null){
+                    return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
+                }
+                var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
+                return ApiResponse<UserDto>.Success(userDto,200);
+            }
+            catch (System.Exception ex)
+            {
+                return ApiResponse<UserDto>.Fail(ex.Message,500,true);
+            }
+        }
+
+        public async Task<ApiResponse<NoDataDto>> Remove(Guid Id)
+        {
+            try
+            {
+                var user = await _repository.GetByGuidAsync(Id);
+                if(user == null){
+                    return ApiResponse<NoDataDto>.Fail("There is no such a user.",404,true);
+                }
+                _repository.Delete(user);
+                await _unitOfWork.CommitAsync();
+                return ApiResponse<NoDataDto>.Success(200);
+            }
+            catch (System.Exception ex)
+            {
+                return ApiResponse<NoDataDto>.Fail(ex.Message,500,true);
+            }
         }
 
         public async Task<ApiResponse<UserDto>> Update(UpdateUserRequest request)
