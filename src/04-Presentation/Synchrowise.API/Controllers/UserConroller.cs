@@ -26,7 +26,7 @@ namespace Synchrowise.API.Controllers
         }
 
         [HttpGet("{Id}")]
-        public async Task<IActionResult> GetUserInfo(Guid Id){
+        public async Task<IActionResult> GetUserInfoByGuid(Guid Id){
             var result = await _service.GetByIdAsync(Id);
             return ActionResultInstance(result);
         }
@@ -34,6 +34,18 @@ namespace Synchrowise.API.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(UpdateUserRequest request){
             var result = await _service.Update(request);
+            return ActionResultInstance(result);
+        }
+
+        [HttpGet("firebase/{FirebaseID}")]
+        public async Task<IActionResult> GetUserInfoByFirebaseID(string FirebaseID){
+            var result = await _service.GetUserByFirebaseID(FirebaseID);
+            return ActionResultInstance(result);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(Guid Id){
+            var result = await _service.Remove(Id);
             return ActionResultInstance(result);
         }
     }

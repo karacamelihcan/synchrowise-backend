@@ -13,6 +13,7 @@ namespace Synchrowise.Services.Services.UserServices
     public interface IUserService 
     {
         Task<ApiResponse<UserDto>> GetByIdAsync(Guid Id);
+        Task<ApiResponse<UserDto>> GetUserByFirebaseID(string firebase_ID);
         Task<ApiResponse<IEnumerable<UserDto>>> GetAllAsync();
         Task<ApiResponse<IQueryable<UserDto>>> Where(Expression<Func<User,bool>> predicate);
         Task<ApiResponse<UserDto>> AddAsync(CreateUserRequest request);
