@@ -13,6 +13,7 @@ namespace Synchrowise.Services.MappingProfile
         public DTOMapper()
         {
             CreateMap<UserDto,User>().ReverseMap();
+            CreateMap<GroupDto,Group>().ReverseMap();
         }
     }
 }
