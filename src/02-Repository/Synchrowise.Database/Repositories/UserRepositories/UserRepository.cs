@@ -30,6 +30,7 @@ namespace Synchrowise.Database.Repositories.UserRepositories
         public override void Delete(User entity)
         {
             entity.isDelete = true;
+            _context.Users.Update(entity);
         }
 
         public override async Task<IEnumerable<User>> GetAll()
@@ -44,17 +45,17 @@ namespace Synchrowise.Database.Repositories.UserRepositories
 
         public override async Task<User> GetByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users.Where(x=>x.Id == id && x.isDelete == false).FirstOrDefaultAsync();
         }
 
         public async Task<User> GetUserByFireBaseID(string firebase_ID)
         {
-            return await _context.Users.Where(x => x.Firebase_uid == firebase_ID ).FirstOrDefaultAsync();
+            return await _context.Users.Where(x => x.Firebase_uid == firebase_ID && x.isDelete == false).FirstOrDefaultAsync();
         }
 
         public async  Task<User> IsUserExist(string firebase_ID)
         {
-            return await  _context.Users.Where(x=> x.Firebase_uid == firebase_ID).FirstOrDefaultAsync();
+            return await  _context.Users.Where(x=> x.Firebase_uid == firebase_ID && x.isDelete == false).FirstOrDefaultAsync();
         }
 
         public override void Update(User entity)

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synchrowise.Database;
@@ -11,9 +12,10 @@ using Synchrowise.Database;
 namespace Synchrowise.Database.Migrations
 {
     [DbContext(typeof(SynchrowiseDbContext))]
-    partial class SynchrowiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220317204436_group-decleration")]
+    partial class groupdecleration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,9 +50,6 @@ namespace Synchrowise.Database.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
-
-                    b.Property<Guid>("OwnerGuid")
-                        .HasColumnType("uuid");
 
                     b.Property<int?>("OwnerId")
                         .HasColumnType("integer");

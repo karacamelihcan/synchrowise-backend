@@ -12,6 +12,7 @@ namespace Synchrowise.Contract.Request.User
         public string Email { get; set; }
         public bool Email_verified { get; set; } 
         public bool Is_New_user { get; set; }
+        public string Signin_Method { get; set; }
         public long Firebase_Creation_Time { get; set; }
         public long Firebase_Last_Signin_Time { get; set; }
     }

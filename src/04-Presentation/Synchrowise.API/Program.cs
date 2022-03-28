@@ -4,6 +4,8 @@ using System.Reflection;
 using Synchrowise.Database.UnitOfWorks;
 using Synchrowise.Services.Services.UserServices;
 using Synchrowise.Database.Repositories.UserRepositories;
+using Synchrowise.Database.Repositories.GroupRepositories;
+using Synchrowise.Services.Services.GroupServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +24,12 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IUserService,UserService>();
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<IGroupRepository,GroupRepository>();
+builder.Services.AddScoped<IGroupService,GroupService>();
+
+builder.Services.AddControllers().AddNewtonsoftJson(options => {
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
