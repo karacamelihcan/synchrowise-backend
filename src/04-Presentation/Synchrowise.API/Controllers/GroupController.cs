@@ -31,5 +31,10 @@ namespace Synchrowise.API.Controllers
             return ActionResultInstance(result);
         }
 
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetGroupInfo(Guid Id){
+            var result = await _service.GetGroupInfo(Id);
+            return ActionResultInstance(result);
+        }
     }
 }

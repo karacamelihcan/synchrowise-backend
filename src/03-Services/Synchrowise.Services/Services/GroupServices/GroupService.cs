@@ -109,5 +109,26 @@ namespace Synchrowise.Services.Services.GroupServices
                 return ApiResponse<NoDataDto>.Fail(ex.Message,500,true);
             }
         }
+
+        public async Task<ApiResponse<GroupDto>> GetGroupInfo(Guid guid)
+        {
+            try
+            {
+                if(guid == null){
+                    return ApiResponse<GroupDto>.Fail("Group ID cannot be null",400,true);
+                }
+                var group = await _repository.GetGroupWithRelations(guid);
+
+                if(group == null){
+                    return ApiResponse<GroupDto>.Fail("There is no such a user",404,true);
+                }
+                var result = CustomMapping.MappingGroup(group);
+                return ApiResponse<GroupDto>.Success(result,200);
+            }
+            catch (System.Exception ex)
+            {
+                return ApiResponse<GroupDto>.Fail(ex.Message,500,true);
+            }
+        }
     }
 }
