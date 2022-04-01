@@ -42,12 +42,12 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
 
         public override async Task<Group> GetByIdAsync(int id)
         {
-            return await _context.Groups.Where(x => x.Id == id).FirstOrDefaultAsync();
+            return await _context.Groups.Where(x => x.Id == id && x.IsActive == true).FirstOrDefaultAsync();
         }
 
         public async Task<Group> GetGroupByGuid(Guid guid)
         {
-            return await _context.Groups.Where(x => x.Guid == guid).FirstOrDefaultAsync();
+            return await _context.Groups.Where(x => x.Guid == guid && x.IsActive == true).FirstOrDefaultAsync();
         }
 
         public async Task<Group> GetGroupWithRelations(Guid guid)
