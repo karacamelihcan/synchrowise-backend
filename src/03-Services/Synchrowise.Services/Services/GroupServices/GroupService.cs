@@ -141,7 +141,7 @@ namespace Synchrowise.Services.Services.GroupServices
                     return ApiResponse<NoDataDto>.Fail("User ID cannot be null",400,true);
                 }
 
-                var group = await _repository.GetGroupByGuid(request.GroupId);
+                var group = await _repository.GetGroupWithRelations(request.GroupId);
                 var groupOwner = await _userRepo.GetByGuidAsync(request.UserID);
                 if(group == null){
                     return ApiResponse<NoDataDto>.Fail("There is no such a group",404,true);
@@ -154,6 +154,12 @@ namespace Synchrowise.Services.Services.GroupServices
                     return ApiResponse<NoDataDto>.Fail("This user not permission for this",403,true);
                 }
 
+                foreach (var user in group.Users)
+                {
+                    user.isHaveGroup = false;
+                    _userRepo.Update(user);
+                }
+
                 _repository.Delete(group);
                 groupOwner.isHaveGroup = false;
                 _userRepo.Update(groupOwner);
@@ -164,7 +170,6 @@ namespace Synchrowise.Services.Services.GroupServices
             }
             catch (System.Exception ex)
             {
-                
                 return ApiResponse<NoDataDto>.Fail(ex.Message,500,true);
             }
         }
