@@ -71,6 +71,65 @@ namespace Synchrowise.Services.Services.GroupServices
             }
         }
 
+        public async Task<ApiResponse<GroupDto>> AddGroupMember(AddGroupMemberRequest request)
+        {
+            try
+            {
+                if (request.GroupID == Guid.Empty || request.MemberID == Guid.Empty 
+                   ||request.OwnerId == Guid.Empty) 
+                {
+                    return ApiResponse<GroupDto>.Fail("Group Id or Member Id cannot be null", 400, true);
+                }
+                var group = await _repository.GetGroupWithRelations(request.GroupID);
+                if (group == null)
+                {
+                    return ApiResponse<GroupDto>.Fail("There is no such a group",404,true);
+                }
+                if(group.OwnerGuid != request.OwnerId){
+                    return ApiResponse<GroupDto>.Fail("This user not permission for this",403,true);
+                }
+                var member = await _userRepo.GetByGuidAsync(request.MemberID);
+                if (member == null)
+                {
+                    return ApiResponse<GroupDto>.Fail("There is no such a user",404,true);
+                }
+                if (group.Users.Count > 4 )
+                {
+                    return ApiResponse<GroupDto>.Fail("Group member count cannot be bigger than 4.",400,true);
+                }
+
+                foreach (var user in group.Users)
+                {
+                    if(user.Guid == request.MemberID){
+                        return ApiResponse<GroupDto>.Fail("This user already in this group",400,true);
+                    }
+                }
+
+                if(member.isHaveGroup){
+                    return ApiResponse<GroupDto>.Fail("This user already has a group",400,true);
+                }
+
+                group.Users.Add(member);
+                group.GroupMemberCount = group.Users.Count;
+                member.Group = group;
+                member.GroupId = group.Guid;
+                member.isHaveGroup = true;
+
+                _repository.Update(group);
+                _userRepo.Update(member);
+                await _unitOfWork.CommitAsync();
+
+                var result = CustomMapping.MappingGroup(group);
+                return ApiResponse<GroupDto>.Success(result,200);
+
+                 
+            }
+            catch (System.Exception ex)
+            {
+                return ApiResponse<GroupDto>.Fail(ex.Message,500,true);
+            }
+        }
+
         public async Task<ApiResponse<NoDataDto>> DeleteGroup(DeleteGroupRequest request)
         {
             try

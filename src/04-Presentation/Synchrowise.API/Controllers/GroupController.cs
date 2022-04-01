@@ -36,5 +36,11 @@ namespace Synchrowise.API.Controllers
             var result = await _service.GetGroupInfo(Id);
             return ActionResultInstance(result);
         }
+
+        [HttpPost("Member")]
+        public async Task<IActionResult> AddGroupMember(AddGroupMemberRequest request){
+            var result = await _service.AddGroupMember(request);
+            return ActionResultInstance(result);
+        }
     }
 }
