@@ -42,5 +42,10 @@ namespace Synchrowise.API.Controllers
             var result = await _service.AddGroupMember(request);
             return ActionResultInstance(result);
         }
+        [HttpDelete("Member/Remove")]
+        public async Task<IActionResult> RemoveGroupMember(RemoveGroupMemberRequest request){
+            var result = await _service.RemoveGroupMember(request);
+            return ActionResultInstance(result);
+        }
     }
 }

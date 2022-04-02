@@ -156,11 +156,16 @@ namespace Synchrowise.Services.Services.GroupServices
 
                 foreach (var user in group.Users)
                 {
+                    group.Users.Remove(user);
+                    user.Group = null;
+                    user.GroupId = Guid.Empty;
                     user.isHaveGroup = false;
                     _userRepo.Update(user);
                 }
 
                 _repository.Delete(group);
+                groupOwner.Group = null;
+                groupOwner.GroupId = Guid.Empty;
                 groupOwner.isHaveGroup = false;
                 _userRepo.Update(groupOwner);
                 await _unitOfWork.CommitAsync();
@@ -188,6 +193,50 @@ namespace Synchrowise.Services.Services.GroupServices
                 }
                 var result = CustomMapping.MappingGroup(group);
                 return ApiResponse<GroupDto>.Success(result,200);
+            }
+            catch (System.Exception ex)
+            {
+                return ApiResponse<GroupDto>.Fail(ex.Message,500,true);
+            }
+        }
+
+        public async Task<ApiResponse<GroupDto>> RemoveGroupMember(RemoveGroupMemberRequest request)
+        {
+            try
+            {
+                if (request.GroupID == Guid.Empty || request.MemberID == Guid.Empty 
+                   ||request.OwnerId == Guid.Empty) 
+                {
+                    return ApiResponse<GroupDto>.Fail("Group Id or Member Id cannot be null", 400, true);
+                }
+                var group = await _repository.GetGroupWithRelations(request.GroupID);
+                if (group == null)
+                {
+                    return ApiResponse<GroupDto>.Fail("There is no such a group",404,true);
+                }
+                if(group.OwnerGuid != request.OwnerId){
+                    return ApiResponse<GroupDto>.Fail("This user not permission for this",403,true);
+                }
+                var member = group.Users.Where(usr => usr.Guid == request.MemberID).FirstOrDefault();
+                if (member == null)
+                {
+                    return ApiResponse<GroupDto>.Fail("There is no such a member",404,true);
+                }
+
+                group.Users.Remove(member);
+                group.GroupMemberCount = group.Users.Count;
+                member.Group = null;
+                member.GroupId = Guid.Empty;
+                member.isHaveGroup = false;
+
+                _repository.Update(group);
+                _userRepo.Update(member);
+                await _unitOfWork.CommitAsync();
+
+                var result = CustomMapping.MappingGroup(group);
+                return ApiResponse<GroupDto>.Success(result,200);
+
+                 
             }
             catch (System.Exception ex)
             {
