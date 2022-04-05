@@ -352,3 +352,4 @@ MigrationBackup/
 src/04-Presentation/Synchrowise.API/c:/temp/internal-nlog-AspNetCore.txt
 src/04-Presentation/Synchrowise.API/appsettings.json
 
+*.txt
