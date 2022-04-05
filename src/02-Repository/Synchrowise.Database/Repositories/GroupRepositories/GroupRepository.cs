@@ -50,6 +50,15 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
             return await _context.Groups.Where(x => x.Guid == guid && x.IsActive == true).FirstOrDefaultAsync();
         }
 
+        public async Task<Group> GetGroupByOwner(Guid OwnerID)
+        {
+            var result = await _context.Groups.Where(grp => grp.Owner.Guid == OwnerID && grp.IsActive == true)
+                                              .Include(grp => grp.Owner)
+                                              .Include(grp => grp.Users)
+                                              .FirstOrDefaultAsync();
+            return result;
+        }
+
         public async Task<Group> GetGroupWithRelations(Guid guid)
         {
             var result = await _context.Groups.Where(grp => grp.Guid == guid && grp.IsActive == true)
