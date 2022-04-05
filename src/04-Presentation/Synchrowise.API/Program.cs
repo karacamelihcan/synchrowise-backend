@@ -6,52 +6,73 @@ using Synchrowise.Services.Services.UserServices;
 using Synchrowise.Database.Repositories.UserRepositories;
 using Synchrowise.Database.Repositories.GroupRepositories;
 using Synchrowise.Services.Services.GroupServices;
+using NLog.Web;
+using NLog;
 
-var builder = WebApplication.CreateBuilder(args);
+var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
-// Add services to the container.
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-//DbContext
-var con = builder.Configuration.GetConnectionString("PostgreSql");
-builder.Services.AddDbContext<SynchrowiseDbContext>(options => {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSql"),sqlOptions =>{
-        sqlOptions.MigrationsAssembly(Assembly.GetAssembly(typeof(SynchrowiseDbContext)).GetName().Name);
+    // Add services to the container.
+
+    //DbContext
+
+    builder.Services.AddDbContext<SynchrowiseDbContext>(options => {
+        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSql"),sqlOptions =>{
+            sqlOptions.MigrationsAssembly(Assembly.GetAssembly(typeof(SynchrowiseDbContext)).GetName().Name);
+        });
     });
-});
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-builder.Services.AddScoped<IUserRepository,UserRepository>();
-builder.Services.AddScoped<IUserService,UserService>();
+    builder.Services.AddScoped<IUserRepository,UserRepository>();
+    builder.Services.AddScoped<IUserService,UserService>();
 
-builder.Services.AddScoped<IGroupRepository,GroupRepository>();
-builder.Services.AddScoped<IGroupService,GroupService>();
+    builder.Services.AddScoped<IGroupRepository,GroupRepository>();
+    builder.Services.AddScoped<IGroupService,GroupService>();
 
-builder.Services.AddControllers().AddNewtonsoftJson(options => {
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-});
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    builder.Services.AddControllers().AddNewtonsoftJson(options => {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+    builder.Logging.ClearProviders();
+    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+    builder.Host.UseNLog();
+
+    var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    
-}
-app.UseSwagger();
-app.UseSwaggerUI(options => {
+    if(!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Error/500");
+        app.UseStatusCodePagesWithReExecute("/Error/{0}");
+    }
+    app.UseSwagger();
+    app.UseSwaggerUI(options => {
     options.SwaggerEndpoint("/swagger/v1/swagger.json","v1");
     options.RoutePrefix = string.Empty;
-});
+    });
 
 
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 
-app.UseAuthorization();
+    app.UseAuthorization();
 
-app.MapControllers();
+    app.MapControllers();
 
-app.Run();
+    app.Run();
+}
+catch (System.Exception ex)
+{
+    logger.Error(ex, "Stopped program because of exception");
+    throw;
+}
+finally
+{
+    NLog.LogManager.Shutdown();
+}

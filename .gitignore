@@ -348,3 +348,8 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+.DS_Store
+src/04-Presentation/Synchrowise.API/c:/temp/internal-nlog-AspNetCore.txt
+src/04-Presentation/Synchrowise.API/appsettings.json
+
+*.txt
