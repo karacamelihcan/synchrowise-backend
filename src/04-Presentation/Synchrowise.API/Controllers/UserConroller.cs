@@ -48,5 +48,10 @@ namespace Synchrowise.API.Controllers
             var result = await _service.Remove(Id);
             return ActionResultInstance(result);
         }
+        [HttpDelete("firebase/delete")]
+        public async Task<IActionResult> DeleteByFirebaseID(string firebase_ID){
+            var result = await _service.RemoveByFirebase(firebase_ID);
+            return ActionResultInstance(result);
+        }
     }
 }
