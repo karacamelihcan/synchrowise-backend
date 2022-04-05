@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Synchrowise.Contract.Request.User;
 using Synchrowise.Contract.Response;
 using Synchrowise.Core.Dtos;
@@ -20,11 +21,13 @@ namespace Synchrowise.Services.Services.UserServices
     {
         private readonly IUserRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IUserRepository repository, IUnitOfWork unitOfWork)
+        public UserService(IUserRepository repository, IUnitOfWork unitOfWork, ILogger<UserService> logger)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<ApiResponse<UserDto>> AddAsync(CreateUserRequest request)
@@ -57,11 +60,12 @@ namespace Synchrowise.Services.Services.UserServices
                 await _repository.AddAsync(newUser);
                 await _unitOfWork.CommitAsync();
                 var DtoUser = ObjectMapper.Mapper.Map<UserDto>(newUser);
+                _logger.LogInformation(newUser.Guid.ToString()+ " "+ "added");
                 return ApiResponse<UserDto>.Success(DtoUser,200);
             }
             catch (System.Exception ex)
             {
-                
+                _logger.LogError(ex.Message);
                 return ApiResponse<UserDto>.Fail(ex.Message,500,true);
             }
         }
@@ -80,10 +84,12 @@ namespace Synchrowise.Services.Services.UserServices
                     return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
                 }
                 var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
+                _logger.LogInformation(Id.ToString()+ " "+ "returned");
                 return ApiResponse<UserDto>.Success(userDto,200);
             }
             catch (System.Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return ApiResponse<UserDto>.Fail(ex.Message,500,true);
             }
         }
@@ -97,10 +103,12 @@ namespace Synchrowise.Services.Services.UserServices
                     return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
                 }
                 var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
+                _logger.LogInformation(firebase_ID+ " "+ "returned");
                 return ApiResponse<UserDto>.Success(userDto,200);
             }
             catch (System.Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return ApiResponse<UserDto>.Fail(ex.Message,500,true);
             }
         }
@@ -115,10 +123,12 @@ namespace Synchrowise.Services.Services.UserServices
                 }
                 _repository.Delete(user);
                 await _unitOfWork.CommitAsync();
+                _logger.LogInformation(Id.ToString()+ " "+ "removed");
                 return ApiResponse<NoDataDto>.Success(200);
             }
             catch (System.Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return ApiResponse<NoDataDto>.Fail(ex.Message,500,true);
             }
         }
@@ -140,11 +150,13 @@ namespace Synchrowise.Services.Services.UserServices
                 user.Firebase_Last_Signin_Time = request.Firebase_Last_Signin_Time != 0 ? DateTimeOffset.FromUnixTimeMilliseconds(request.Firebase_Last_Signin_Time) : user.Firebase_Last_Signin_Time;
                 _repository.Update(user);
                 await _unitOfWork.CommitAsync();
+                _logger.LogInformation(request.Guid.ToString()+ " "+ "updated");
                 var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
                 return ApiResponse<UserDto>.Success(userDto,200);
             }
             catch (System.Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return ApiResponse<UserDto>.Fail(ex.Message,500,true);
             }
 
