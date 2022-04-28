@@ -15,6 +15,8 @@ namespace Synchrowise.Database.Configurations
             builder.Property(x => x.Username).HasMaxLength(50);
             builder.HasIndex(x=> x.Username).IsUnique();
             builder.Property(x => x.Email).IsRequired();
+
+            builder.HasOne( usr => usr.Avatar).WithOne(img => img.Owner).HasForeignKey<User>(usr => usr.AvatarID);
         }
     }
 }

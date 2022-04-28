@@ -12,7 +12,6 @@ namespace Synchrowise.Contract.Request.User
         public string Username { get; set; }
         public string Email { get; set; }
         public bool Email_verified { get; set; } 
-        public string Avatar { get; set; } 
         public long Firebase_Last_Signin_Time { get; set; }
     }
 }

@@ -40,22 +40,28 @@ namespace Synchrowise.Database.Repositories.UserRepositories
 
         public async Task<User> GetByGuidAsync(Guid Id)
         {
-            return await _context.Users.Where(x => x.Guid == Id && x.isDelete == false).FirstOrDefaultAsync();
+            return await _context.Users.Where(x => x.Guid == Id && x.isDelete == false)
+                                       .Include(x => x.Avatar)
+                                       .FirstOrDefaultAsync();
         }
 
         public override async Task<User> GetByIdAsync(int id)
         {
-            return await _context.Users.Where(x=>x.Id == id && x.isDelete == false).FirstOrDefaultAsync();
+            return await _context.Users.Where(x=>x.Id == id && x.isDelete == false)
+                                       .Include(x => x.Avatar)
+                                       .FirstOrDefaultAsync();
         }
 
         public async Task<User> GetUserByFireBaseID(string firebase_ID)
         {
-            return await _context.Users.Where(x => x.Firebase_uid == firebase_ID && x.isDelete == false).FirstOrDefaultAsync();
+            return await _context.Users.Where(x => x.Firebase_uid == firebase_ID && x.isDelete == false)
+                                       .Include(x => x.Avatar)
+                                       .FirstOrDefaultAsync();
         }
 
-        public async  Task<User> IsUserExist(string firebase_ID)
+        public async Task<User> IsUserExist(string firebase_ID)
         {
-            return await  _context.Users.Where(x=> x.Firebase_uid == firebase_ID && x.isDelete == false).FirstOrDefaultAsync();
+            return await _context.Users.Where(x=> x.Firebase_uid == firebase_ID && x.isDelete == false).FirstOrDefaultAsync();
         }
 
         public override void Update(User entity)
@@ -65,7 +71,7 @@ namespace Synchrowise.Database.Repositories.UserRepositories
 
         public override async Task<IQueryable<User>> Where(Expression<Func<User, bool>> expression)
         {
-            return  _context.Users.Where(expression);
+            return  _context.Users.Where(expression).Include(x => x.Avatar);
         }
     }
 }

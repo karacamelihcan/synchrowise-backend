@@ -20,6 +20,7 @@ namespace Synchrowise.Services.Services.UserServices
         Task<ApiResponse<NoDataDto>> Remove(Guid Id);
         Task<ApiResponse<NoDataDto>> RemoveByFirebase(string firebase);
         Task<ApiResponse<UserDto>> Update(UpdateUserRequest request);
+        Task<ApiResponse<UserDto>> UploadUserAvatar(UploadAvatarRequest request);
 
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synchrowise.Database;
@@ -11,9 +12,10 @@ using Synchrowise.Database;
 namespace Synchrowise.Database.Migrations
 {
     [DbContext(typeof(SynchrowiseDbContext))]
-    partial class SynchrowiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220405221459_user-images")]
+    partial class userimages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,9 +128,6 @@ namespace Synchrowise.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AvatarID")
-                        .IsUnique();
-
                     b.HasIndex("Firebase_uid")
                         .IsUnique();
 
@@ -140,7 +139,7 @@ namespace Synchrowise.Database.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Synchrowise.Core.Models.UserAvatar", b =>
+            modelBuilder.Entity("Synchrowise.Core.Models.UserImages", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -148,13 +147,7 @@ namespace Synchrowise.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OwnerGuid")
                         .HasColumnType("uuid");
 
                     b.Property<int>("OwnerID")
@@ -164,18 +157,18 @@ namespace Synchrowise.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedDate")
+                    b.Property<DateTime>("UploadDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("boolean");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerID")
+                        .IsUnique();
 
                     b.HasIndex("Path")
                         .IsUnique();
 
-                    b.ToTable("UserAvatars");
+                    b.ToTable("UserImages");
                 });
 
             modelBuilder.Entity("Synchrowise.Core.Models.Group", b =>
@@ -189,19 +182,22 @@ namespace Synchrowise.Database.Migrations
 
             modelBuilder.Entity("Synchrowise.Core.Models.User", b =>
                 {
-                    b.HasOne("Synchrowise.Core.Models.UserAvatar", "Avatar")
-                        .WithOne("Owner")
-                        .HasForeignKey("Synchrowise.Core.Models.User", "AvatarID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Synchrowise.Core.Models.Group", "Group")
                         .WithMany("Users")
                         .HasForeignKey("GroupId1");
 
-                    b.Navigation("Avatar");
-
                     b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("Synchrowise.Core.Models.UserImages", b =>
+                {
+                    b.HasOne("Synchrowise.Core.Models.User", "Owner")
+                        .WithOne("Avatar")
+                        .HasForeignKey("Synchrowise.Core.Models.UserImages", "OwnerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Synchrowise.Core.Models.Group", b =>
@@ -209,9 +205,9 @@ namespace Synchrowise.Database.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Synchrowise.Core.Models.UserAvatar", b =>
+            modelBuilder.Entity("Synchrowise.Core.Models.User", b =>
                 {
-                    b.Navigation("Owner");
+                    b.Navigation("Avatar");
                 });
 #pragma warning restore 612, 618
         }

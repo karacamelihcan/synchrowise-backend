@@ -11,7 +11,8 @@ namespace Synchrowise.Core.Dtos
         public int Id { get; set; }
         public Guid Guid { get; set; }
         public string Username { get; set; }
-        public string Avatar { get; set; }
+        public string Email { get; set; }
+        public UserAvatarDto Avatar { get; set; }
         public EnumPremiumType PremiumType { get; set; }
     }
 }
