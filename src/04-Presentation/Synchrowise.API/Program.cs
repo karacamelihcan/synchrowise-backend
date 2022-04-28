@@ -8,6 +8,8 @@ using Synchrowise.Database.Repositories.GroupRepositories;
 using Synchrowise.Services.Services.GroupServices;
 using NLog.Web;
 using NLog;
+using Synchrowise.Database.Repositories.UserAvatarRepositories;
+
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -33,6 +35,9 @@ try
     builder.Services.AddScoped<IGroupRepository,GroupRepository>();
     builder.Services.AddScoped<IGroupService,GroupService>();
 
+    builder.Services.AddScoped<IUserAvatarRepository,UserAvatarRepository>();
+    builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
     builder.Services.AddControllers().AddNewtonsoftJson(options => {
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
@@ -54,14 +59,16 @@ try
     }
     app.UseSwagger();
     app.UseSwaggerUI(options => {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json","v1");
-    options.RoutePrefix = string.Empty;
+        options.SwaggerEndpoint("/swagger/v1/swagger.json","v1");
+        options.RoutePrefix = string.Empty;
     });
 
 
     app.UseHttpsRedirection();
 
     app.UseAuthorization();
+
+    app.UseStaticFiles();
 
     app.MapControllers();
 

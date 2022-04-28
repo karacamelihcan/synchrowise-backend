@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synchrowise.Database;
@@ -11,9 +12,10 @@ using Synchrowise.Database;
 namespace Synchrowise.Database.Migrations
 {
     [DbContext(typeof(SynchrowiseDbContext))]
-    partial class SynchrowiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220409225710_Avatar-Updated")]
+    partial class AvatarUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,9 +150,6 @@ namespace Synchrowise.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("Guid")
                         .HasColumnType("uuid");
 
@@ -165,6 +164,9 @@ namespace Synchrowise.Database.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UploadDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("isDeleted")

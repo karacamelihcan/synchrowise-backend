@@ -20,7 +20,7 @@ namespace Synchrowise.Core.Models
         public string Email { get; set; }
         [JsonIgnore]
         public bool Email_verified { get; set; } = false;
-        public string Avatar { get; set; } = "src/images/default.jpg";
+        
         [JsonIgnore]
         public bool Is_New_user { get; set; } = true;
         [JsonIgnore]
@@ -39,6 +39,9 @@ namespace Synchrowise.Core.Models
         
         [JsonIgnore]
         public Group Group { get; set; }
+
+        public int AvatarID { get; set; }
+        public virtual UserAvatar Avatar { get; set; } 
 
     }
 }
