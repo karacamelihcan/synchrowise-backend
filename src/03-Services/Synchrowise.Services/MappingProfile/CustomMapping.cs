@@ -15,10 +15,17 @@ namespace Synchrowise.Services.MappingProfile
                 Guid = group.Guid,
                 GroupName = group.GroupName,
                 GroupMemberCount = group.Users.Count,
-                CreatedDate = group.CreatedDate,
-                GroupOwner = group.Owner,
-                GroupMember = group.Users
+                CreatedDate = group.CreatedDate
             };
+            var groupOwner = ObjectMapper.Mapper.Map<UserDto>(group.Owner);
+            var MemberList = new List<UserDto>();
+
+            foreach (var user in group.Users)
+            {
+                MemberList.Add(ObjectMapper.Mapper.Map<UserDto>(user));
+            }
+            groupDto.GroupOwner = groupOwner;
+            groupDto.GroupMember = MemberList;
             return groupDto;
         }
     }

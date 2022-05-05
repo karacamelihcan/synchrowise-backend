@@ -15,5 +15,6 @@ namespace Synchrowise.Services.Services.GroupServices
         Task<ApiResponse<GroupDto>> GetGroupInfo(Guid guid);
         Task<ApiResponse<GroupDto>> AddGroupMember(AddGroupMemberRequest request);
         Task<ApiResponse<GroupDto>> RemoveGroupMember(RemoveGroupMemberRequest request);
+        Task<ApiResponse<GroupDto>> GetGroupInfosByUser(Guid guid);
     }
 }

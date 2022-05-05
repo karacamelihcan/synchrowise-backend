@@ -14,5 +14,6 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
         Task<Group> GetGroupWithRelations(Guid guid);
         Task<Group> GetGroupByOwner(Guid OwnerID);
 
+
     }
 }

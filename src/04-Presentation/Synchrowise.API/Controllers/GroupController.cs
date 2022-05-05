@@ -47,5 +47,11 @@ namespace Synchrowise.API.Controllers
             var result = await _service.RemoveGroupMember(request);
             return ActionResultInstance(result);
         }
+
+        [HttpGet("Member/Get/{Id}")]
+        public async Task<IActionResult> GetGroupInfoByUser(Guid Id){
+            var result = await _service.GetGroupInfosByUser(Id);
+            return ActionResultInstance(result);
+        }
     }
 }
