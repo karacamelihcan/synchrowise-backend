@@ -13,7 +13,7 @@ namespace Synchrowise.Core.Dtos
         public string GroupName { get; set; }
         public int GroupMemberCount { get; set; }
         public DateTime CreatedDate { get; set; }
-        public User GroupOwner { get; set; }
-        public List<User> GroupMember { get; set; }
+        public UserDto GroupOwner { get; set; }
+        public List<UserDto> GroupMember { get; set; }
     }
 }

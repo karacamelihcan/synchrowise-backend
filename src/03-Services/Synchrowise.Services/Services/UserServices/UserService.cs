@@ -251,7 +251,7 @@ namespace Synchrowise.Services.Services.UserServices
         {
             try
             {
-                if (request.OwnerGuid == null || request.File == null || request.File.Length == 0)
+                if (request.OwnerGuid == Guid.Empty || request.File == null || request.File.Length == 0)
                 {
                     return ApiResponse<UserDto>.Fail("File or Owner Guid section cannot be null.", 400, true);
                 }
