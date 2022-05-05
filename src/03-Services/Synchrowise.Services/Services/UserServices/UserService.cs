@@ -233,6 +233,7 @@ namespace Synchrowise.Services.Services.UserServices
                 user.Email_verified = request.Email_verified;
                 user.Is_New_user = false;
                 user.Firebase_Last_Signin_Time = request.Firebase_Last_Signin_Time != 0 ? DateTimeOffset.FromUnixTimeMilliseconds(request.Firebase_Last_Signin_Time) : user.Firebase_Last_Signin_Time;
+                user.PremiumType = request.PremiumType;
                 _repository.Update(user);
                 await _unitOfWork.CommitAsync();
                 var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
