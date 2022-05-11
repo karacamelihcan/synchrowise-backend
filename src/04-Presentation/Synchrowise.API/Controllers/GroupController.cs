@@ -53,5 +53,10 @@ namespace Synchrowise.API.Controllers
             var result = await _service.GetGroupInfosByUser(Id);
             return ActionResultInstance(result);
         }
+        [HttpPost("File")]
+        public async Task<IActionResult> UploadFile([FromForm] UploadGroupFileRequest request){
+            var result = await _service.UploadFiles(request);
+            return ActionResultInstance(result);
+        }
     }
 }

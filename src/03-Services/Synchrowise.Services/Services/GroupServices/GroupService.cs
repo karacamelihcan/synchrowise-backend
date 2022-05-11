@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Synchrowise.Contract.Request.Group;
 using Synchrowise.Contract.Response;
 using Synchrowise.Core.Dtos;
 using Synchrowise.Core.Models;
+using Synchrowise.Database.Repositories.GroupFileRepositories;
 using Synchrowise.Database.Repositories.GroupRepositories;
 using Synchrowise.Database.Repositories.UserRepositories;
 using Synchrowise.Database.UnitOfWorks;
@@ -21,12 +24,18 @@ namespace Synchrowise.Services.Services.GroupServices
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepo;
         private readonly ILogger<GroupService> _logger;
-        public GroupService(IGroupRepository repository, IUnitOfWork unitOfWork, IUserRepository userRepo, ILogger<GroupService> logger)
+        private readonly IWebHostEnvironment _environment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IGroupFileRepository _fileRepository;
+        public GroupService(IGroupRepository repository, IUnitOfWork unitOfWork, IUserRepository userRepo, ILogger<GroupService> logger, IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor, IGroupFileRepository fileRepository)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _userRepo = userRepo;
             _logger = logger;
+            _environment = environment;
+            _httpContextAccessor = httpContextAccessor;
+            _fileRepository = fileRepository;
         }
 
         public async Task<ApiResponse<GroupDto>> AddAsync(CreateGroupRequest request)
@@ -159,13 +168,21 @@ namespace Synchrowise.Services.Services.GroupServices
                     return ApiResponse<NoDataDto>.Fail("This user not permission for this",403,true);
                 }
 
-                foreach (var user in group.Users)
+                foreach (var user in group.Users.ToList())
                 {
                     group.Users.Remove(user);
                     user.Group = null;
                     user.GroupId = Guid.Empty;
                     user.isHaveGroup = false;
                     _userRepo.Update(user);
+                }
+
+                foreach (var file in group.GroupFiles.ToList())
+                {
+                    if(File.Exists(file.FolderPath)){
+                        File.Delete(file.FolderPath);
+                    }
+                    _fileRepository.Delete(file);
                 }
 
                 _repository.Delete(group);
@@ -189,7 +206,7 @@ namespace Synchrowise.Services.Services.GroupServices
         {
             try
             {
-                if(guid == null){
+                if(guid == Guid.Empty){
                     return ApiResponse<GroupDto>.Fail("Group ID cannot be null",400,true);
                 }
                 var group = await _repository.GetGroupWithRelations(guid);
@@ -281,6 +298,70 @@ namespace Synchrowise.Services.Services.GroupServices
                 _logger.LogError(ex.Message);
                 return ApiResponse<GroupDto>.Fail(ex.Message,500,true);
             }
+        }
+
+        public async Task<ApiResponse<GroupFileDto>> UploadFiles(UploadGroupFileRequest request)
+        {
+            try
+            {
+                if (request.OwnerGuid == Guid.Empty || request.File == null || request.File.Length == 0 || request.GroupGuid == Guid.Empty)
+                {
+                    return ApiResponse<GroupFileDto>.Fail("File, Owner Guid or Group Guid section cannot be null.", 400, true);
+                }
+                var owner = await _userRepo.GetByGuidAsync(request.OwnerGuid);
+                if (owner == null)
+                {
+                    return ApiResponse<GroupFileDto>.Fail("There is no such a user", 404, true);
+                }
+
+                var group = await _repository.GetGroupWithRelations(request.GroupGuid);
+                if(group == null){
+                    return ApiResponse<GroupFileDto>.Fail("There is no such a group.",404,true);
+                }
+                if(owner.Guid != group.OwnerGuid){
+                    return ApiResponse<GroupFileDto>.Fail("This user not permission for this.",403,true);
+                }
+                var fileExtension = Path.GetExtension(request.File.FileName).ToLower();
+
+                var uploadFolderPath = Path.Combine(_environment.WebRootPath, "Sources/Groups", group.Guid.ToString());
+                if (!Directory.Exists(uploadFolderPath))
+                {
+                    Directory.CreateDirectory(uploadFolderPath);
+                }
+                
+                var mainPath = "Sources/Groups/" + group.Guid.ToString() + "/" + Guid.NewGuid().ToString() + fileExtension;
+                var filePath = Path.Combine(_environment.WebRootPath,mainPath);
+                var dbFilePath = Path.Combine(_httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value,mainPath); 
+                
+
+                using (FileStream fileStream = System.IO.File.Create(filePath))
+                {
+                    await request.File.CopyToAsync(fileStream);
+                    fileStream.Flush();
+                }
+
+                var file = new GroupFile(){
+                    Guid = Guid.NewGuid(),
+                    Path = dbFilePath,
+                    FolderPath = filePath,
+                    CreatedDate = DateTime.UtcNow,
+                    GroupGuid = group.Guid
+                };
+                file.Group = group;
+                
+                await _fileRepository.AddAsync(file);
+                await _unitOfWork.CommitAsync();
+                var fileDto = ObjectMapper.Mapper.Map<GroupFileDto>(file);
+
+                return ApiResponse<GroupFileDto>.Success(fileDto,200);
+
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return ApiResponse<GroupFileDto>.Fail(ex.Message, 500, true);
+            }
+
         }
     }
 }

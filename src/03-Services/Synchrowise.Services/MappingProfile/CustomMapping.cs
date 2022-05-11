@@ -11,7 +11,6 @@ namespace Synchrowise.Services.MappingProfile
     {
         public static GroupDto MappingGroup(Group group){
             var groupDto = new GroupDto(){
-                Id = group.Id,
                 Guid = group.Guid,
                 GroupName = group.GroupName,
                 GroupMemberCount = group.Users.Count,
@@ -20,12 +19,21 @@ namespace Synchrowise.Services.MappingProfile
             var groupOwner = ObjectMapper.Mapper.Map<UserDto>(group.Owner);
             var MemberList = new List<UserDto>();
 
-            foreach (var user in group.Users)
+            foreach (var user in group.Users.ToList())
             {
                 MemberList.Add(ObjectMapper.Mapper.Map<UserDto>(user));
             }
             groupDto.GroupOwner = groupOwner;
             groupDto.GroupMember = MemberList;
+
+            var files = new List<GroupFileDto>();
+
+            foreach (var file in group.GroupFiles.ToList())
+            {
+                files.Add(ObjectMapper.Mapper.Map<GroupFileDto>(file));
+            }
+            groupDto.GroupFiles = files;
+
             return groupDto;
         }
     }

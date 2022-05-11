@@ -78,8 +78,8 @@ namespace Synchrowise.Services.Services.UserServices
                     CreatedDate = DateTime.UtcNow
                 };
                 newUser.Avatar = newUserAvatar;
-            
-                newUserAvatar.Path = Path.Combine(_httpContextAccessor.HttpContext.Request.Host.Value, newUserAvatar.Path);
+
+                newUserAvatar.Url = Path.Combine(_httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value, newUserAvatar.Url);
                 await _repository.AddAsync(newUser);
                 await _unitOfWork.CommitAsync();
                 var DtoUser = ObjectMapper.Mapper.Map<UserDto>(newUser);
@@ -149,7 +149,7 @@ namespace Synchrowise.Services.Services.UserServices
                 {
                     group.Owner = null;
                     group.OwnerGuid = Guid.Empty;
-                    foreach (var member in group.Users)
+                    foreach (var member in group.Users.ToList())
                     {
                         member.Group = null;
                         member.GroupId = Guid.Empty;
@@ -157,8 +157,16 @@ namespace Synchrowise.Services.Services.UserServices
                         group.Users.Remove(member);
                         _repository.Update(member);
                     }
-                    _groupRepository.Delete(group);
+
                 }
+
+                if (File.Exists(user.Avatar.FolderPath))
+                {
+                    File.Delete(user.Avatar.FolderPath);
+                }
+                user.Avatar.isDeleted = true;
+                user.Avatar.UpdatedDate = DateTime.UtcNow;
+                _groupRepository.Delete(group);
                 _repository.Delete(user);
                 await _unitOfWork.CommitAsync();
                 return ApiResponse<NoDataDto>.Success(200);
@@ -189,7 +197,7 @@ namespace Synchrowise.Services.Services.UserServices
                 {
                     group.Owner = null;
                     group.OwnerGuid = Guid.Empty;
-                    foreach (var member in group.Users)
+                    foreach (var member in group.Users.ToList())
                     {
                         member.Group = null;
                         member.GroupId = Guid.Empty;
@@ -199,6 +207,13 @@ namespace Synchrowise.Services.Services.UserServices
                     }
                     _groupRepository.Delete(group);
                 }
+                if (File.Exists(user.Avatar.FolderPath))
+                {
+                    File.Delete(user.Avatar.FolderPath);
+                }
+                user.Avatar.isDeleted = true;
+                user.Avatar.UpdatedDate = DateTime.UtcNow;
+                _groupRepository.Delete(group);
                 _repository.Delete(user);
                 await _unitOfWork.CommitAsync();
                 return ApiResponse<NoDataDto>.Success(200);
@@ -272,11 +287,12 @@ namespace Synchrowise.Services.Services.UserServices
                 {
                     Directory.CreateDirectory(uploadFolderPath);
                 }
-                
+
                 var mainPath = "Sources/Users/" + owner.Guid.ToString() + "/" + owner.Avatar.Guid.ToString() + fileExtension;
-                var filePath = Path.Combine(_environment.WebRootPath,mainPath);
-                var dbFilePath = Path.Combine(_httpContextAccessor.HttpContext.Request.Host.Value,mainPath); 
-                if(File.Exists(filePath)){
+                var filePath = Path.Combine(_environment.WebRootPath, mainPath);
+                var dbFilePath = Path.Combine(_httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value, mainPath);
+                if (File.Exists(filePath))
+                {
                     File.Delete(filePath);
                 }
 
@@ -286,8 +302,10 @@ namespace Synchrowise.Services.Services.UserServices
                     fileStream.Flush();
                 }
 
-                owner.Avatar.Path = dbFilePath;
+                owner.Avatar.Url = dbFilePath;
+                owner.Avatar.FolderPath = filePath;
                 owner.Avatar.UpdatedDate = DateTime.UtcNow;
+                owner.Avatar.Owner = owner;
                 _repository.Update(owner);
                 await _unitOfWork.CommitAsync();
 
