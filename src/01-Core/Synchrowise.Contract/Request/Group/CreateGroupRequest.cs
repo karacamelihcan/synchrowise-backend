@@ -8,6 +8,7 @@ namespace Synchrowise.Contract.Request.Group
     public class CreateGroupRequest
     {
         public string GroupName { get; set; }
+        public string Description { get; set; }
         public Guid OwnerID { get; set; }
     }
 }

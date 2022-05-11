@@ -11,6 +11,7 @@ namespace Synchrowise.Core.Models
         public int Id { get; set; }
         public Guid Guid { get; set; }
         public string GroupName { get; set; }
+        public string Description { get; set; }
         public int GroupMemberCount { get; set; } = 1;
         public DateTime CreatedDate { get; set; }
         public DateTime EndDate { get; set; }

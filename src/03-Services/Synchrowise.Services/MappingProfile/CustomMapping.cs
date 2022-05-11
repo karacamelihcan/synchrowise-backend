@@ -13,6 +13,7 @@ namespace Synchrowise.Services.MappingProfile
             var groupDto = new GroupDto(){
                 Guid = group.Guid,
                 GroupName = group.GroupName,
+                Description = group.Description,
                 GroupMemberCount = group.Users.Count,
                 CreatedDate = group.CreatedDate
             };

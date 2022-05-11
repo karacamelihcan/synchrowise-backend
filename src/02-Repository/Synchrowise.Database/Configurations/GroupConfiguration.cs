@@ -15,7 +15,7 @@ namespace Synchrowise.Database.Configurations
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).UseIdentityColumn();
             builder.Property(x => x.GroupName).IsRequired();
-
+            builder.Property(grp => grp.Description).IsRequired();
             builder.HasMany(x => x.Users).WithOne(x => x.Group);
             builder.HasMany(grp => grp.GroupFiles).WithOne(file => file.Group);
 
