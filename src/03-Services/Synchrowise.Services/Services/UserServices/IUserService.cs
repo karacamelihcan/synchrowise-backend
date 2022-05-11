@@ -22,6 +22,7 @@ namespace Synchrowise.Services.Services.UserServices
         Task<ApiResponse<UserDto>> Update(UpdateUserRequest request);
         Task<ApiResponse<UserDto>> UploadUserAvatar(UploadAvatarRequest request);
         Task<ApiResponse<NoDataDto>> RemoveUserAvatar(Guid guid);
+     
 
     }
 }

@@ -42,6 +42,8 @@ namespace Synchrowise.Core.Models
 
         public int AvatarID { get; set; }
         public virtual UserAvatar Avatar { get; set; } 
+        public bool MessageNotification { get; set; } = true;
+        public bool GroupNotification { get; set; } = true;
 
     }
 }

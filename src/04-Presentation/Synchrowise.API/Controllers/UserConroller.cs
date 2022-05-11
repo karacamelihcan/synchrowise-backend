@@ -64,7 +64,6 @@ namespace Synchrowise.API.Controllers
         [HttpDelete("Avatar/{guid}")]
         public async Task<IActionResult> RemoveAvatar(Guid guid){
             var result = await _service.RemoveUserAvatar(guid);
-            return ActionResultInstance(result);
         }
     }
 }
