@@ -37,7 +37,7 @@ namespace Synchrowise.API.Controllers
             return ActionResultInstance(result);
         }
 
-        [HttpGet("firebase/{FirebaseID}")]
+        [HttpGet("Firebase/{FirebaseID}")]
         public async Task<IActionResult> GetUserInfoByFirebaseID(string FirebaseID){
             var result = await _service.GetUserByFirebaseID(FirebaseID);
             return ActionResultInstance(result);
@@ -49,15 +49,21 @@ namespace Synchrowise.API.Controllers
             return ActionResultInstance(result);
         }
 
-        [HttpDelete("firebase/delete")]
+        [HttpDelete("Firebase/Delete")]
         public async Task<IActionResult> DeleteByFirebaseID(string firebase_ID){
             var result = await _service.RemoveByFirebase(firebase_ID);
             return ActionResultInstance(result);
         }
 
-        [HttpPost("avatar")]
+        [HttpPost("Avatar")]
         public async Task<IActionResult> UploadAvatar([FromForm]UploadAvatarRequest request){
             var result = await _service.UploadUserAvatar(request);
+            return ActionResultInstance(result);
+        }
+        
+        [HttpPut("Notification")]
+        public async Task<IActionResult> UpdateNotificationSettings(UpdateNotificationRequest request){
+            var result = await _service.UpdateNotificationSetting(request);
             return ActionResultInstance(result);
         }
     }

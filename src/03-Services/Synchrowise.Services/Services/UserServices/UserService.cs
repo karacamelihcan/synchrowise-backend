@@ -262,6 +262,32 @@ namespace Synchrowise.Services.Services.UserServices
 
         }
 
+        public async Task<ApiResponse<UserDto>> UpdateNotificationSetting(UpdateNotificationRequest request)
+        {
+            try
+            {
+                if(request.UserGuid == Guid.Empty){
+                    return ApiResponse<UserDto>.Fail("User guid section cannot be null",400,true);
+                }
+                var user = await _repository.GetByGuidAsync(request.UserGuid);
+                if(user == null){
+                    return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
+                }
+                user.MessageNotification = request.MessageNotification;
+                user.GroupNotification = request.GroupNotification;
+                _repository.Update(user);
+                await _unitOfWork.CommitAsync();
+                var result = ObjectMapper.Mapper.Map<UserDto>(user);
+                return ApiResponse<UserDto>.Success(result,200);
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return ApiResponse<UserDto>.Fail(ex.Message, 500, true);
+            }
+        }
+
+
         public async Task<ApiResponse<UserDto>> UploadUserAvatar(UploadAvatarRequest request)
         {
             try
