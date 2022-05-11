@@ -45,6 +45,10 @@ namespace Synchrowise.Services.Services.GroupServices
                 if(request.GroupName == null){
                     return ApiResponse<GroupDto>.Fail("Group name cannot be null",400,true);
                 }
+
+                if(request.Description == null){
+                    return ApiResponse<GroupDto>.Fail("Group description cannot be null",400,true);
+                }
                 if(await _repository.isGroupNameExist(request.GroupName)){
                     return ApiResponse<GroupDto>.Fail("Group name must be unique",400,true);
                 }
@@ -148,10 +152,10 @@ namespace Synchrowise.Services.Services.GroupServices
         {
             try
             {
-                if(request.GroupId == null){
+                if(request.GroupId == Guid.Empty){
                     return ApiResponse<NoDataDto>.Fail("Group ID cannot be null", 400,true);
                 }
-                if(request.UserID == null){
+                if(request.UserID == Guid.Empty){
                     return ApiResponse<NoDataDto>.Fail("User ID cannot be null",400,true);
                 }
 
@@ -297,6 +301,43 @@ namespace Synchrowise.Services.Services.GroupServices
             {
                 _logger.LogError(ex.Message);
                 return ApiResponse<GroupDto>.Fail(ex.Message,500,true);
+            }
+        }
+
+        public async Task<ApiResponse<NoDataDto>> UpdateGroupInfo(UpdateGroupInfoRequest request)
+        {
+            try
+            {
+                if(request.GroupName == null || request.Description == null){
+                    return ApiResponse<NoDataDto>.Fail("Name or description section cannot be null",400,true);
+                }
+                if(request.GroupId == Guid.Empty || request.OwnerId == Guid.Empty){
+                    return ApiResponse<NoDataDto>.Fail("Owner or Group Id cannot be null",400,true);
+                }
+                var owner = await _userRepo.GetByGuidAsync(request.OwnerId);
+                if (owner == null)
+                {
+                    return ApiResponse<NoDataDto>.Fail("There is no such a user", 404, true);
+                }
+
+                var group = await _repository.GetGroupWithRelations(request.GroupId);
+                if(group == null){
+                    return ApiResponse<NoDataDto>.Fail("There is no such a group.",404,true);
+                }
+                if(owner.Guid != group.OwnerGuid){
+                    return ApiResponse<NoDataDto>.Fail("This user not permission for this.",403,true);
+                }
+
+                group.Description = request.Description;
+                group.GroupName = request.GroupName;
+                _repository.Update(group);
+                await _unitOfWork.CommitAsync();
+                return ApiResponse<NoDataDto>.Success(200);
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return ApiResponse<NoDataDto>.Fail(ex.Message,500,true);
             }
         }
 

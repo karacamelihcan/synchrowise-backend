@@ -10,6 +10,7 @@ namespace Synchrowise.Core.Dtos
     {
         public Guid Guid { get; set; }
         public string GroupName { get; set; }
+        public string Description { get; set; }
         public int GroupMemberCount { get; set; }
         public DateTime CreatedDate { get; set; }
         public UserDto GroupOwner { get; set; }

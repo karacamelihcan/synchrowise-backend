@@ -58,5 +58,10 @@ namespace Synchrowise.API.Controllers
             var result = await _service.UploadFiles(request);
             return ActionResultInstance(result);
         }
+        [HttpPut]
+        public async Task<IActionResult> UpdateGroupInfo(UpdateGroupInfoRequest request){
+            var result = await _service.UpdateGroupInfo(request);
+            return ActionResultInstance(result);
+        }
     }
 }
