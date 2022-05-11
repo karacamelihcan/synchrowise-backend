@@ -18,6 +18,7 @@ namespace Synchrowise.Core.Models
         public Guid OwnerGuid { get; set; }
         public User Owner { get; set; }
         public List<User> Users { get; set; }
+        public List<GroupFile> GroupFiles { get; set; }
 
     }
 }

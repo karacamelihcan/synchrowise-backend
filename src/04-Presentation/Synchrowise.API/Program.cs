@@ -9,7 +9,7 @@ using Synchrowise.Services.Services.GroupServices;
 using NLog.Web;
 using NLog;
 using Synchrowise.Database.Repositories.UserAvatarRepositories;
-
+using Synchrowise.Database.Repositories.GroupFileRepositories;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -37,6 +37,8 @@ try
 
     builder.Services.AddScoped<IUserAvatarRepository,UserAvatarRepository>();
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+    builder.Services.AddScoped<IGroupFileRepository,GroupFileRepository>();
 
     builder.Services.AddControllers().AddNewtonsoftJson(options => {
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;

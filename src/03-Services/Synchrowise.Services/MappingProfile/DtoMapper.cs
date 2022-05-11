@@ -15,6 +15,7 @@ namespace Synchrowise.Services.MappingProfile
             CreateMap<UserDto,User>().ReverseMap();
             CreateMap<GroupDto,Group>().ReverseMap();
             CreateMap<UserAvatarDto,UserAvatar>().ReverseMap();
+            CreateMap<GroupFile,GroupFileDto>().ReverseMap();
         }
     }
 }

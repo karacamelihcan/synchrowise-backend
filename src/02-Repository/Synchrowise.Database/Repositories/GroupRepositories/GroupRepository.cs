@@ -64,6 +64,7 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
             var result = await _context.Groups.Where(grp => grp.Guid == guid && grp.IsActive == true)
                                               .Include(x => x.Owner)
                                               .Include(x => x.Users)
+                                              .Include(grp => grp.GroupFiles)
                                               .FirstOrDefaultAsync();
 
             return result;

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synchrowise.Database;
@@ -11,9 +12,10 @@ using Synchrowise.Database;
 namespace Synchrowise.Database.Migrations
 {
     [DbContext(typeof(SynchrowiseDbContext))]
-    partial class SynchrowiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220506113620_group-files")]
+    partial class groupfiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,9 +74,6 @@ namespace Synchrowise.Database.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("FolderPath")
-                        .HasColumnType("text");
 
                     b.Property<Guid>("GroupGuid")
                         .HasColumnType("uuid");
@@ -188,10 +187,6 @@ namespace Synchrowise.Database.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("FolderPath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<Guid>("Guid")
                         .HasColumnType("uuid");
 
@@ -201,12 +196,12 @@ namespace Synchrowise.Database.Migrations
                     b.Property<int>("OwnerID")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Url")
+                    b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("isDeleted")
                         .HasColumnType("boolean");

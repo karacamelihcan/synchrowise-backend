@@ -14,7 +14,8 @@ namespace Synchrowise.Database.Configurations
         {
             builder.HasKey(img => img.Id);
             builder.Property(img => img.Id).UseIdentityColumn();
-            builder.Property(img => img.Path).IsRequired();
+            builder.Property(img => img.FolderPath).IsRequired();
+            builder.Property(img => img.Url).IsRequired();
             builder.HasOne(img => img.Owner).WithOne(usr => usr.Avatar).HasForeignKey<UserAvatar>(img => img.OwnerID);
         }
     }

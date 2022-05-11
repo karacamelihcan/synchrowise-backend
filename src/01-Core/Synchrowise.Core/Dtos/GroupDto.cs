@@ -8,12 +8,12 @@ namespace Synchrowise.Core.Dtos
 {
     public class GroupDto
     {
-        public int Id { get; set; }
         public Guid Guid { get; set; }
         public string GroupName { get; set; }
         public int GroupMemberCount { get; set; }
         public DateTime CreatedDate { get; set; }
         public UserDto GroupOwner { get; set; }
         public List<UserDto> GroupMember { get; set; }
+        public List<GroupFileDto> GroupFiles { get; set; }
     }
 }
