@@ -60,11 +60,10 @@ namespace Synchrowise.API.Controllers
             var result = await _service.UploadUserAvatar(request);
             return ActionResultInstance(result);
         }
-        
-        [HttpPut("Notification")]
-        public async Task<IActionResult> UpdateNotificationSettings(UpdateNotificationRequest request){
-            var result = await _service.UpdateNotificationSetting(request);
-            return ActionResultInstance(result);
+
+        [HttpDelete("Avatar/{guid}")]
+        public async Task<IActionResult> RemoveAvatar(Guid guid){
+            var result = await _service.RemoveUserAvatar(guid);
         }
     }
 }
