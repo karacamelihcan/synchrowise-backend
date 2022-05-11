@@ -226,6 +226,48 @@ namespace Synchrowise.Services.Services.UserServices
 
         }
 
+        public async Task<ApiResponse<NoDataDto>> RemoveUserAvatar(Guid guid)
+        {
+            try
+            {
+                if(guid == Guid.Empty){
+                    return ApiResponse<NoDataDto>.Fail("User ID cannot be null",400,true);
+                }
+                var user = await _repository.GetByGuidAsync(guid);
+                if(user == null){
+                    return ApiResponse<NoDataDto>.Fail("There is no such a user",404,true);
+                }
+
+                
+
+                var mainPath = "Sources/Defaults/3af13787-a0f4-4ed0-888a-eb3a988c14e0.jpeg";
+                var folderPath = Path.Combine(_environment.WebRootPath, mainPath);
+                var UrlPath = Path.Combine(_httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value, mainPath);
+
+                if(user.Avatar.Url == UrlPath){
+                    return ApiResponse<NoDataDto>.Fail("This user doesn't have an avatar",400,true);
+                }
+
+                if(File.Exists(user.Avatar.FolderPath)){
+                    File.Delete(user.Avatar.FolderPath);
+                }
+
+                user.Avatar.Url = UrlPath;
+                user.Avatar.FolderPath = folderPath;
+                user.Avatar.UpdatedDate = DateTime.UtcNow;
+
+                _repository.Update(user);
+                await _unitOfWork.CommitAsync();
+                return ApiResponse<NoDataDto>.Success(200);
+
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return ApiResponse<NoDataDto>.Fail(ex.Message, 500, true);
+            }
+        }
+
         public async Task<ApiResponse<UserDto>> Update(UpdateUserRequest request)
         {
             try
