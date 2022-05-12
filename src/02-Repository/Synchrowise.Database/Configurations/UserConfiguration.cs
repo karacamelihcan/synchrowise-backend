@@ -8,8 +8,8 @@ namespace Synchrowise.Database.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).UseIdentityColumn();
+            builder.HasKey(x => x.UserId);
+            builder.Property(x => x.UserId).UseIdentityColumn();
             builder.Property(x => x.Firebase_uid).IsRequired();
             builder.HasIndex(x=> x.Firebase_uid).IsUnique();
             builder.Property(x => x.Username).HasMaxLength(50);
@@ -17,6 +17,7 @@ namespace Synchrowise.Database.Configurations
             builder.Property(x => x.Email).IsRequired();
 
             builder.HasOne( usr => usr.Avatar).WithOne(img => img.Owner).HasForeignKey<User>(usr => usr.AvatarID);
+            builder.HasOne( usr => usr.Notifications).WithOne(ntf => ntf.Owner).HasForeignKey<User>(usr => usr.UserId);
         }
     }
 }

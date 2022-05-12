@@ -10,7 +10,7 @@ namespace Synchrowise.Core.Models
 {
     public class User
     {
-        public int Id { get; set; }
+        public int UserId { get; set; }
         public Guid Guid { get; set; }
         [JsonIgnore]
         public string Firebase_uid { get; set; }
@@ -42,8 +42,8 @@ namespace Synchrowise.Core.Models
 
         public int AvatarID { get; set; }
         public virtual UserAvatar Avatar { get; set; } 
-        public bool MessageNotification { get; set; } = true;
-        public bool GroupNotification { get; set; } = true;
+        public NotificationSettings Notifications { get; set; }
+        
 
     }
 }

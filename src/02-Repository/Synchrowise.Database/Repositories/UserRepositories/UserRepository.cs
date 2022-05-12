@@ -42,12 +42,13 @@ namespace Synchrowise.Database.Repositories.UserRepositories
         {
             return await _context.Users.Where(x => x.Guid == Id && x.isDelete == false)
                                        .Include(x => x.Avatar)
+                                       .Include(x => x.Notifications)
                                        .FirstOrDefaultAsync();
         }
 
         public override async Task<User> GetByIdAsync(int id)
         {
-            return await _context.Users.Where(x=>x.Id == id && x.isDelete == false)
+            return await _context.Users.Where(x=>x.UserId == id && x.isDelete == false)
                                        .Include(x => x.Avatar)
                                        .FirstOrDefaultAsync();
         }

@@ -13,7 +13,6 @@ namespace Synchrowise.Core.Dtos
         public string Email { get; set; }
         public UserAvatarDto Avatar { get; set; }
         public EnumPremiumType PremiumType { get; set; }
-        public bool MessageNotification { get; set; } 
-        public bool GroupNotification { get; set; }
+        public NotificationSettingsDto Notifications { get; set; }
     }
 }

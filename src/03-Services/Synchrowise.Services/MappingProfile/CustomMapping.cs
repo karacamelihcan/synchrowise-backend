@@ -17,12 +17,12 @@ namespace Synchrowise.Services.MappingProfile
                 GroupMemberCount = group.Users.Count,
                 CreatedDate = group.CreatedDate
             };
-            var groupOwner = ObjectMapper.Mapper.Map<UserDto>(group.Owner);
-            var MemberList = new List<UserDto>();
+            var groupOwner = ObjectMapper.Mapper.Map<GroupMemberDto>(group.Owner);
+            var MemberList = new List<GroupMemberDto>();
 
             foreach (var user in group.Users.ToList())
             {
-                MemberList.Add(ObjectMapper.Mapper.Map<UserDto>(user));
+                MemberList.Add(ObjectMapper.Mapper.Map<GroupMemberDto>(user));
             }
             groupDto.GroupOwner = groupOwner;
             groupDto.GroupMember = MemberList;

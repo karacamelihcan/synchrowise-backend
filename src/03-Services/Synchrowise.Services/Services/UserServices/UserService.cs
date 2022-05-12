@@ -69,17 +69,23 @@ namespace Synchrowise.Services.Services.UserServices
                     Firebase_Last_Signin_Time = DateTimeOffset.FromUnixTimeMilliseconds(request.Firebase_Last_Signin_Time),
                     Term_Vision = 1,
                 };
+
+                var notification = new NotificationSettings(){
+                    Guid = Guid.NewGuid(),
+                    MessageNotification = false,
+                    GroupNotification = false
+                };
+                newUser.Notifications = notification;
                 var newUserAvatar = new UserAvatar()
                 {
                     Guid = Guid.NewGuid(),
-                    OwnerID = newUser.Id,
+                    OwnerID = newUser.UserId,
                     OwnerGuid = newUser.Guid,
                     Owner = newUser,
                     CreatedDate = DateTime.UtcNow
                 };
+                newUserAvatar.Url = Path.Combine(_httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value, newUserAvatar.FolderPath);
                 newUser.Avatar = newUserAvatar;
-
-                newUserAvatar.Url = Path.Combine(_httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value, newUserAvatar.Url);
                 await _repository.AddAsync(newUser);
                 await _unitOfWork.CommitAsync();
                 var DtoUser = ObjectMapper.Mapper.Map<UserDto>(newUser);
@@ -304,7 +310,7 @@ namespace Synchrowise.Services.Services.UserServices
 
         }
 
-        public async Task<ApiResponse<UserDto>> UpdateNotificationSetting(UpdateNotificationRequest request)
+        public async Task<ApiResponse<UserDto>> UpdateNotificationSettings(UpdateNotificationRequest request)
         {
             try
             {
@@ -315,8 +321,8 @@ namespace Synchrowise.Services.Services.UserServices
                 if(user == null){
                     return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
                 }
-                user.MessageNotification = request.MessageNotification;
-                user.GroupNotification = request.GroupNotification;
+                user.Notifications.GroupNotification = request.GroupNotification;
+                user.Notifications.MessageNotification = request.MessageNotification;
                 _repository.Update(user);
                 await _unitOfWork.CommitAsync();
                 var result = ObjectMapper.Mapper.Map<UserDto>(user);
