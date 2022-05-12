@@ -62,6 +62,7 @@ namespace Synchrowise.Services.Services.GroupServices
                 var group = new Group(){
                     Guid = Guid.NewGuid(),
                     GroupName = request.GroupName,
+                    Description = request.Description,
                     CreatedDate = DateTime.UtcNow,
                     IsActive = true,
                     OwnerGuid = owner.Guid,

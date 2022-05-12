@@ -15,6 +15,7 @@ namespace Synchrowise.Database
         public DbSet<Group> Groups { get; set; }
         public DbSet<UserAvatar> UserAvatars { get; set; }
         public DbSet<GroupFile> GroupFiles { get; set; }
+        public DbSet<NotificationSettings> Notifications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
