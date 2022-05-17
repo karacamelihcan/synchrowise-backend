@@ -56,6 +56,7 @@ try
 // Configure the HTTP request pipeline.
 
     app.UseHttpLogging();
+    
     if(!app.Environment.IsDevelopment())
     {
         app.UseExceptionHandler("/Error/500");

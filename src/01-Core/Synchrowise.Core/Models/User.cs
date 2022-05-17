@@ -10,7 +10,7 @@ namespace Synchrowise.Core.Models
 {
     public class User
     {
-        public int UserId { get; set; }
+        public int Id { get; set; }
         public Guid Guid { get; set; }
         [JsonIgnore]
         public string Firebase_uid { get; set; }
