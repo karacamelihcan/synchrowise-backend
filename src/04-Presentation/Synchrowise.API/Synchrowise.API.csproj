@@ -11,6 +11,11 @@
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0"/>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="wwwroot\.well-known\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\03-Services\Synchrowise.Services\Synchrowise.Services.csproj"/>
   </ItemGroup>
   <ItemGroup>
