@@ -354,3 +354,4 @@ src/04-Presentation/Synchrowise.API/appsettings.json
 
 *.txt
 src/04-Presentation/Synchrowise.API/wwwroot
+src/04-Presentation/Synchrowise.API/appsettings.json
