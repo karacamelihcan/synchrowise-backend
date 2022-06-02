@@ -20,47 +20,55 @@ namespace Synchrowise.API.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create(CreateGroupRequest request){
+        public async Task<IActionResult> Create(CreateGroupRequest request)
+        {
             var result = await _service.AddAsync(request);
             return ActionResultInstance(result);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteGroupByOwner(DeleteGroupRequest request){
-            var result = await _service.DeleteGroup(request);
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteGroupByOwner(Guid Id, DeleteGroupRequest request)
+        {
+            var result = await _service.DeleteGroup(Id, request);
             return ActionResultInstance(result);
         }
 
         [HttpGet("{Id}")]
-        public async Task<IActionResult> GetGroupInfo(Guid Id){
+        public async Task<IActionResult> GetGroupInfo(Guid Id)
+        {
             var result = await _service.GetGroupInfo(Id);
             return ActionResultInstance(result);
         }
 
-        [HttpPost("Member")]
-        public async Task<IActionResult> AddGroupMember(AddGroupMemberRequest request){
-            var result = await _service.AddGroupMember(request);
+        [HttpPost("{Id}/Member")]
+        public async Task<IActionResult> AddGroupMember(Guid Id, AddGroupMemberRequest request)
+        {
+            var result = await _service.AddGroupMember(Id, request);
             return ActionResultInstance(result);
         }
-        [HttpDelete("Member/Remove")]
-        public async Task<IActionResult> RemoveGroupMember(RemoveGroupMemberRequest request){
-            var result = await _service.RemoveGroupMember(request);
+        [HttpDelete("{Id}/Member/Remove")]
+        public async Task<IActionResult> RemoveGroupMember(Guid Id, RemoveGroupMemberRequest request)
+        {
+            var result = await _service.RemoveGroupMember(Id, request);
             return ActionResultInstance(result);
         }
 
         [HttpGet("Member/Get/{Id}")]
-        public async Task<IActionResult> GetGroupInfoByUser(Guid Id){
+        public async Task<IActionResult> GetGroupInfoByUser(Guid Id)
+        {
             var result = await _service.GetGroupInfosByUser(Id);
             return ActionResultInstance(result);
         }
-        [HttpPost("File")]
-        public async Task<IActionResult> UploadFile([FromForm] UploadGroupFileRequest request){
-            var result = await _service.UploadFiles(request);
+        [HttpPost("{Id}/File")]
+        public async Task<IActionResult> UploadFile(Guid Id, [FromForm] UploadGroupFileRequest request)
+        {
+            var result = await _service.UploadFiles(Id, request);
             return ActionResultInstance(result);
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateGroupInfo(UpdateGroupInfoRequest request){
-            var result = await _service.UpdateGroupInfo(request);
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateGroupInfo(Guid Id, UpdateGroupInfoRequest request)
+        {
+            var result = await _service.UpdateGroupInfo(Id, request);
             return ActionResultInstance(result);
         }
     }

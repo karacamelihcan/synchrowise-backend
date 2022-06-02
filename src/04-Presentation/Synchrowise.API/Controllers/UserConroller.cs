@@ -20,54 +20,63 @@ namespace Synchrowise.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserRequest request){
+        public async Task<IActionResult> CreateUser(CreateUserRequest request)
+        {
             var result = await _service.AddAsync(request);
             return ActionResultInstance(result);
         }
 
         [HttpGet("{Id}")]
-        public async Task<IActionResult> GetUserInfoByGuid(Guid Id){
+        public async Task<IActionResult> GetUserInfoByGuid(Guid Id)
+        {
             var result = await _service.GetByIdAsync(Id);
             return ActionResultInstance(result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateUserRequest request){
+        public async Task<IActionResult> Update(UpdateUserRequest request)
+        {
             var result = await _service.Update(request);
             return ActionResultInstance(result);
         }
 
         [HttpGet("Firebase/{FirebaseID}")]
-        public async Task<IActionResult> GetUserInfoByFirebaseID(string FirebaseID){
+        public async Task<IActionResult> GetUserInfoByFirebaseID(string FirebaseID)
+        {
             var result = await _service.GetUserByFirebaseID(FirebaseID);
             return ActionResultInstance(result);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(Guid Id){
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(Guid Id)
+        {
             var result = await _service.Remove(Id);
             return ActionResultInstance(result);
         }
 
         [HttpDelete("Firebase/Delete")]
-        public async Task<IActionResult> DeleteByFirebaseID(string firebase_ID){
+        public async Task<IActionResult> DeleteByFirebaseID(string firebase_ID)
+        {
             var result = await _service.RemoveByFirebase(firebase_ID);
             return ActionResultInstance(result);
         }
 
         [HttpPost("Avatar")]
-        public async Task<IActionResult> UploadAvatar([FromForm]UploadAvatarRequest request){
+        public async Task<IActionResult> UploadAvatar([FromForm] UploadAvatarRequest request)
+        {
             var result = await _service.UploadUserAvatar(request);
             return ActionResultInstance(result);
         }
 
-        [HttpDelete("Avatar/{guid}")]
-        public async Task<IActionResult> RemoveAvatar(Guid guid){
-            var result = await _service.RemoveUserAvatar(guid);
+        [HttpDelete("{Id}/Avatar")]
+        public async Task<IActionResult> RemoveAvatar(Guid Id)
+        {
+            var result = await _service.RemoveUserAvatar(Id);
             return ActionResultInstance(result);
         }
         [HttpPut("Notifications")]
-        public async Task<IActionResult> UpdateNotificationSettings(UpdateNotificationRequest request){
+        public async Task<IActionResult> UpdateNotificationSettings(UpdateNotificationRequest request)
+        {
             var result = await _service.UpdateNotificationSettings(request);
             return ActionResultInstance(result);
         }

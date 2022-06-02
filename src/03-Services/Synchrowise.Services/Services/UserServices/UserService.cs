@@ -70,7 +70,8 @@ namespace Synchrowise.Services.Services.UserServices
                     Term_Vision = 1,
                 };
 
-                var notification = new NotificationSettings(){
+                var notification = new NotificationSettings()
+                {
                     Guid = Guid.NewGuid(),
                     MessageNotification = false,
                     GroupNotification = false
@@ -232,29 +233,33 @@ namespace Synchrowise.Services.Services.UserServices
 
         }
 
-        public async Task<ApiResponse<NoDataDto>> RemoveUserAvatar(Guid guid)
+        public async Task<ApiResponse<UserAvatarDto>> RemoveUserAvatar(Guid guid)
         {
             try
             {
-                if(guid == Guid.Empty){
-                    return ApiResponse<NoDataDto>.Fail("User ID cannot be null",400,true);
+                if (guid == Guid.Empty)
+                {
+                    return ApiResponse<UserAvatarDto>.Fail("User ID cannot be null", 400, true);
                 }
                 var user = await _repository.GetByGuidAsync(guid);
-                if(user == null){
-                    return ApiResponse<NoDataDto>.Fail("There is no such a user",404,true);
+                if (user == null)
+                {
+                    return ApiResponse<UserAvatarDto>.Fail("There is no such a user", 404, true);
                 }
 
-                
+
 
                 var mainPath = "Sources/Defaults/3af13787-a0f4-4ed0-888a-eb3a988c14e0.jpeg";
                 var folderPath = Path.Combine(_environment.WebRootPath, mainPath);
                 var UrlPath = Path.Combine(_httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value, mainPath);
 
-                if(user.Avatar.Url == UrlPath){
-                    return ApiResponse<NoDataDto>.Fail("This user doesn't have an avatar",400,true);
+                if (user.Avatar.Url == UrlPath)
+                {
+                    return ApiResponse<UserAvatarDto>.Fail("This user doesn't have an avatar", 400, true);
                 }
 
-                if(File.Exists(user.Avatar.FolderPath)){
+                if (File.Exists(user.Avatar.FolderPath))
+                {
                     File.Delete(user.Avatar.FolderPath);
                 }
 
@@ -264,13 +269,16 @@ namespace Synchrowise.Services.Services.UserServices
 
                 _repository.Update(user);
                 await _unitOfWork.CommitAsync();
-                return ApiResponse<NoDataDto>.Success(200);
+
+                var result = ObjectMapper.Mapper.Map<UserAvatarDto>(user.Avatar);
+
+                return ApiResponse<UserAvatarDto>.Success(result, 200);
 
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return ApiResponse<NoDataDto>.Fail(ex.Message, 500, true);
+                return ApiResponse<UserAvatarDto>.Fail(ex.Message, 500, true);
             }
         }
 
@@ -314,19 +322,21 @@ namespace Synchrowise.Services.Services.UserServices
         {
             try
             {
-                if(request.UserGuid == Guid.Empty){
-                    return ApiResponse<UserDto>.Fail("User guid section cannot be null",400,true);
+                if (request.UserGuid == Guid.Empty)
+                {
+                    return ApiResponse<UserDto>.Fail("User guid section cannot be null", 400, true);
                 }
                 var user = await _repository.GetByGuidAsync(request.UserGuid);
-                if(user == null){
-                    return ApiResponse<UserDto>.Fail("There is no such a user",404,true);
+                if (user == null)
+                {
+                    return ApiResponse<UserDto>.Fail("There is no such a user", 404, true);
                 }
                 user.Notifications.GroupNotification = request.GroupNotification;
                 user.Notifications.MessageNotification = request.MessageNotification;
                 _repository.Update(user);
                 await _unitOfWork.CommitAsync();
                 var result = ObjectMapper.Mapper.Map<UserDto>(user);
-                return ApiResponse<UserDto>.Success(result,200);
+                return ApiResponse<UserDto>.Success(result, 200);
             }
             catch (System.Exception ex)
             {
@@ -336,24 +346,27 @@ namespace Synchrowise.Services.Services.UserServices
         }
 
 
-        public async Task<ApiResponse<UserDto>> UploadUserAvatar(UploadAvatarRequest request)
+        public async Task<ApiResponse<UserAvatarDto>> UploadUserAvatar(UploadAvatarRequest request)
         {
             try
             {
-                if (request.OwnerGuid == Guid.Empty || request.File == null || request.File.Length == 0)
+                if (request.ownerId == Guid.Empty || request.file == null || request.file.Length == 0)
                 {
-                    return ApiResponse<UserDto>.Fail("File or Owner Guid section cannot be null.", 400, true);
+                    return ApiResponse<UserAvatarDto>.Fail("File or Owner Guid section cannot be null.", 400, true);
                 }
-                var owner = await _repository.GetByGuidAsync(request.OwnerGuid);
+
+
+
+                var owner = await _repository.GetByGuidAsync(request.ownerId);
                 if (owner == null)
                 {
-                    return ApiResponse<UserDto>.Fail("There is no such a user", 404, true);
+                    return ApiResponse<UserAvatarDto>.Fail("There is no such a user", 404, true);
                 }
-                var fileExtension = Path.GetExtension(request.File.FileName).ToLower();
+                var fileExtension = Path.GetExtension(request.file.FileName).ToLower();
 
                 if (fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
                 {
-                    return ApiResponse<UserDto>.Fail("File extension must be jpg, jpeg or png", 400, true);
+                    return ApiResponse<UserAvatarDto>.Fail("File extension must be jpg, jpeg or png", 400, true);
                 }
 
                 var uploadFolderPath = Path.Combine(_environment.WebRootPath, "Sources/Users", owner.Guid.ToString());
@@ -372,7 +385,7 @@ namespace Synchrowise.Services.Services.UserServices
 
                 using (FileStream fileStream = System.IO.File.Create(filePath))
                 {
-                    await request.File.CopyToAsync(fileStream);
+                    await request.file.CopyToAsync(fileStream);
                     fileStream.Flush();
                 }
 
@@ -380,17 +393,19 @@ namespace Synchrowise.Services.Services.UserServices
                 owner.Avatar.FolderPath = filePath;
                 owner.Avatar.UpdatedDate = DateTime.UtcNow;
                 owner.Avatar.Owner = owner;
+
                 _repository.Update(owner);
                 await _unitOfWork.CommitAsync();
 
+                var result = ObjectMapper.Mapper.Map<UserAvatarDto>(owner.Avatar);
 
-                return ApiResponse<UserDto>.Success(200);
+                return ApiResponse<UserAvatarDto>.Success(result, 200);
 
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return ApiResponse<UserDto>.Fail(ex.Message, 500, true);
+                return ApiResponse<UserAvatarDto>.Fail(ex.Message, 500, true);
             }
 
 

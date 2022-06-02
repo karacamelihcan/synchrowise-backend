@@ -8,7 +8,7 @@ namespace Synchrowise.Contract.Request.User
 {
     public class UploadAvatarRequest
     {
-        public Guid OwnerGuid { get; set; }
-        public IFormFile File { get; set; }
+        public Guid ownerId { get; set; }
+        public IFormFile file { get; set; }
     }
 }

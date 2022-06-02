@@ -10,13 +10,13 @@ namespace Synchrowise.Services.Services.GroupServices
 {
     public interface IGroupService
     {
+        Task<ApiResponse<GroupDto>> GetGroupInfosByUser(Guid UserId);
+        Task<ApiResponse<GroupDto>> GetGroupInfo(Guid GroupId);
         Task<ApiResponse<GroupDto>> AddAsync(CreateGroupRequest request);
-        Task<ApiResponse<NoDataDto>> DeleteGroup(DeleteGroupRequest request);
-        Task<ApiResponse<GroupDto>> GetGroupInfo(Guid guid);
-        Task<ApiResponse<GroupDto>> AddGroupMember(AddGroupMemberRequest request);
-        Task<ApiResponse<GroupDto>> RemoveGroupMember(RemoveGroupMemberRequest request);
-        Task<ApiResponse<GroupDto>> GetGroupInfosByUser(Guid guid);
-        Task<ApiResponse<GroupFileDto>> UploadFiles(UploadGroupFileRequest request);
-        Task<ApiResponse<NoDataDto>> UpdateGroupInfo(UpdateGroupInfoRequest request);
+        Task<ApiResponse<NoDataDto>> DeleteGroup(Guid GroupId, DeleteGroupRequest request);
+        Task<ApiResponse<GroupDto>> AddGroupMember(Guid GroupId, AddGroupMemberRequest request);
+        Task<ApiResponse<GroupDto>> RemoveGroupMember(Guid GroupId, RemoveGroupMemberRequest request);
+        Task<ApiResponse<GroupFileDto>> UploadFiles(Guid GroupId, UploadGroupFileRequest request);
+        Task<ApiResponse<NoDataDto>> UpdateGroupInfo(Guid GroupId, UpdateGroupInfoRequest request);
     }
 }

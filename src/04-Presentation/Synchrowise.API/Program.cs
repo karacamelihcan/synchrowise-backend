@@ -55,10 +55,10 @@ try
     builder.Host.UseNLog();
 
     var app = builder.Build();
-
     // Configure the HTTP request pipeline.
 
     app.UseHttpLogging();
+
     if (!app.Environment.IsDevelopment())
     {
         app.UseExceptionHandler("/Error/500");

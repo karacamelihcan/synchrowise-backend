@@ -8,7 +8,6 @@ namespace Synchrowise.Contract.Request.Group
 {
     public class UploadGroupFileRequest
     {
-        public Guid GroupGuid { get; set; }
         public Guid OwnerGuid { get; set; }
         public IFormFile File { get; set; }
     }

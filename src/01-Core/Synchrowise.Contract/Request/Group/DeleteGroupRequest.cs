@@ -7,7 +7,6 @@ namespace Synchrowise.Contract.Request.Group
 {
     public class DeleteGroupRequest
     {
-        public Guid GroupId { get; set; }
         public Guid UserID { get; set; }
     }
 }
