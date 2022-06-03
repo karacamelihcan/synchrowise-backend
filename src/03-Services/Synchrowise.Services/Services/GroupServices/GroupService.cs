@@ -102,11 +102,11 @@ namespace Synchrowise.Services.Services.GroupServices
         {
             try
             {
-                if (GroupId != Guid.Empty || request.MemberID == Guid.Empty)
+                if (GroupId == Guid.Empty || request.MemberID == Guid.Empty)
                 {
                     return ApiResponse<GroupDto>.Fail("Group Name or Member Id cannot be null", 400, true);
                 }
-                var group = await _repository.GetGroupByGuid(GroupId);
+                var group = await _repository.GetGroupWithRelations(GroupId);
 
                 if (group == null)
                 {
@@ -118,7 +118,10 @@ namespace Synchrowise.Services.Services.GroupServices
                 {
                     return ApiResponse<GroupDto>.Fail("There is no such a user", 404, true);
                 }
-                if (group.Users.Count > 4)
+
+                var activeUsers = group.Users.Where(x => !x.isDelete).ToList();
+
+                if (activeUsers.Count > 8)
                 {
                     return ApiResponse<GroupDto>.Fail("Group member count cannot be bigger than 4.", 400, true);
                 }
@@ -291,7 +294,7 @@ namespace Synchrowise.Services.Services.GroupServices
                     return ApiResponse<GroupDto>.Fail("Group Name cannot be empty", 400, true);
                 }
 
-                var group = await _repository.GetGroupByName(GroupName);
+                var group = await _repository.GetGroupByNameWithRelations(GroupName);
                 if (group == null)
                 {
                     return ApiResponse<GroupDto>.Fail("Group not found by given Group Name", 404, true);

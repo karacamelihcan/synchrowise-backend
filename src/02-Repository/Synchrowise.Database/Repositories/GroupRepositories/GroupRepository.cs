@@ -70,6 +70,17 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
             return result;
         }
 
+        public async Task<Group> GetGroupByNameWithRelations(string GroupName)
+        {
+            var group = await _context.Groups.Where(grp => grp.GroupName.ToLower() == GroupName.ToLower() && grp.IsActive == true)
+                                              .Include(x => x.Owner)
+                                              .Include(x => x.Users)
+                                              .Include(grp => grp.GroupFiles)
+                                             .FirstOrDefaultAsync();
+            var result = group;
+            return result;
+        }
+
         public async Task<Group> GetGroupByName(string GroupName)
         {
             var group = await _context.Groups.Where(grp => grp.GroupName.ToLower() == GroupName.ToLower() && grp.IsActive == true)

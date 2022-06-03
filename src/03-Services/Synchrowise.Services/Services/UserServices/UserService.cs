@@ -73,8 +73,8 @@ namespace Synchrowise.Services.Services.UserServices
                 var notification = new NotificationSettings()
                 {
                     Guid = Guid.NewGuid(),
-                    MessageNotification = false,
-                    GroupNotification = false
+                    MessageNotification = true,
+                    GroupNotification = true
                 };
                 newUser.Notifications = notification;
                 var newUserAvatar = new UserAvatar()
@@ -87,8 +87,10 @@ namespace Synchrowise.Services.Services.UserServices
                 };
                 newUserAvatar.Url = Path.Combine(_httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value, newUserAvatar.FolderPath);
                 newUser.Avatar = newUserAvatar;
+
                 await _repository.AddAsync(newUser);
                 await _unitOfWork.CommitAsync();
+
                 var DtoUser = ObjectMapper.Mapper.Map<UserDto>(newUser);
                 return ApiResponse<UserDto>.Success(DtoUser, 200);
             }
@@ -173,8 +175,14 @@ namespace Synchrowise.Services.Services.UserServices
                 }
                 user.Avatar.isDeleted = true;
                 user.Avatar.UpdatedDate = DateTime.UtcNow;
-                _groupRepository.Delete(group);
+
+                if (group != null)
+                {
+                    _groupRepository.Delete(group);
+                }
+
                 _repository.Delete(user);
+
                 await _unitOfWork.CommitAsync();
                 return ApiResponse<NoDataDto>.Success(200);
             }

@@ -11,6 +11,7 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
     {
         Task<Group> GetGroupByGuid(Guid guid);
         Task<Group> GetGroupByName(string GroupName);
+        Task<Group> GetGroupByNameWithRelations(string GroupName);
         Task<Group> GetGroupWithRelations(Guid guid);
         Task<Group> GetGroupByOwner(Guid OwnerID);
 
