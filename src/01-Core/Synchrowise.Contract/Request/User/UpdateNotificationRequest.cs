@@ -7,7 +7,6 @@ namespace Synchrowise.Contract.Request.User
 {
     public class UpdateNotificationRequest
     {
-        public Guid UserGuid { get; set; }
         public bool MessageNotification { get; set; }
         public bool GroupNotification { get; set; }
     }

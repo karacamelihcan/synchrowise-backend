@@ -290,11 +290,11 @@ namespace Synchrowise.Services.Services.UserServices
             }
         }
 
-        public async Task<ApiResponse<UserDto>> Update(UpdateUserRequest request)
+        public async Task<ApiResponse<UserDto>> Update(Guid UserId, UpdateUserRequest request)
         {
             try
             {
-                var user = await _repository.GetByGuidAsync(request.Guid);
+                var user = await _repository.GetByGuidAsync(UserId);
                 if (user == null)
                 {
                     return ApiResponse<UserDto>.Fail("There is no such a user", 404, true);
@@ -313,6 +313,8 @@ namespace Synchrowise.Services.Services.UserServices
                 user.Is_New_user = false;
                 user.Firebase_Last_Signin_Time = request.Firebase_Last_Signin_Time != 0 ? DateTimeOffset.FromUnixTimeMilliseconds(request.Firebase_Last_Signin_Time) : user.Firebase_Last_Signin_Time;
                 user.PremiumType = request.PremiumType;
+                user.firebase_messaging_token = request.firebase_messaging_token;
+
                 _repository.Update(user);
                 await _unitOfWork.CommitAsync();
                 var userDto = ObjectMapper.Mapper.Map<UserDto>(user);
@@ -326,15 +328,15 @@ namespace Synchrowise.Services.Services.UserServices
 
         }
 
-        public async Task<ApiResponse<UserDto>> UpdateNotificationSettings(UpdateNotificationRequest request)
+        public async Task<ApiResponse<UserDto>> UpdateNotificationSettings(Guid UserId, UpdateNotificationRequest request)
         {
             try
             {
-                if (request.UserGuid == Guid.Empty)
+                if (UserId == Guid.Empty)
                 {
                     return ApiResponse<UserDto>.Fail("User guid section cannot be null", 400, true);
                 }
-                var user = await _repository.GetByGuidAsync(request.UserGuid);
+                var user = await _repository.GetByGuidAsync(UserId);
                 if (user == null)
                 {
                     return ApiResponse<UserDto>.Fail("There is no such a user", 404, true);

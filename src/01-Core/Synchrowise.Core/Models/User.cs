@@ -17,10 +17,11 @@ namespace Synchrowise.Core.Models
         [JsonIgnore]
         public string Firebase_id_token { get; set; }
         public string Username { get; set; }
+        public string firebase_messaging_token { get; set; }
         public string Email { get; set; }
         [JsonIgnore]
         public bool Email_verified { get; set; } = false;
-        
+
         [JsonIgnore]
         public bool Is_New_user { get; set; } = true;
         [JsonIgnore]
@@ -36,14 +37,14 @@ namespace Synchrowise.Core.Models
         public bool isDelete { get; set; } = false;
         [JsonIgnore]
         public Guid GroupId { get; set; }
-        
+
         [JsonIgnore]
         public Group Group { get; set; }
 
         public int AvatarID { get; set; }
-        public virtual UserAvatar Avatar { get; set; } 
+        public virtual UserAvatar Avatar { get; set; }
         public NotificationSettings Notifications { get; set; }
-        
+
 
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synchrowise.Database;
@@ -11,9 +12,10 @@ using Synchrowise.Database;
 namespace Synchrowise.Database.Migrations
 {
     [DbContext(typeof(SynchrowiseDbContext))]
-    partial class SynchrowiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220603145417_firebase_messaging_token")]
+    partial class firebase_messaging_token
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -189,9 +191,6 @@ namespace Synchrowise.Database.Migrations
                     b.Property<bool>("isHaveGroup")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("firebase_messaging_token")
-                        .HasColumnType("text");
-
                     b.HasKey("UserId");
 
                     b.HasIndex("AvatarID")
@@ -206,7 +205,6 @@ namespace Synchrowise.Database.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-
                 });
 
             modelBuilder.Entity("Synchrowise.Core.Models.UserAvatar", b =>

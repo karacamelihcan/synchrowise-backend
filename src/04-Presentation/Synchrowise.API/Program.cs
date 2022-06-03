@@ -11,6 +11,13 @@ using NLog;
 using Synchrowise.Database.Repositories.UserAvatarRepositories;
 using Synchrowise.Database.Repositories.GroupFileRepositories;
 
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
 try
@@ -53,6 +60,34 @@ try
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
+
+
+    var firebaseApp = FirebaseApp.Create(new AppOptions()
+    {
+        Credential = GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "firebase-adminsdk.json")),
+    });
+
+    builder.Services.AddSingleton<FirebaseApp>(firebaseApp);
+
+    var messaging = FirebaseMessaging.DefaultInstance;
+
+    var message = new Message()
+    {
+        Data = new Dictionary<string, string>()
+        {
+            ["message"] = "Hello, World!",
+            ["title"] = "Hello, Title!",
+            ["body"] = "Hello, Hello body!"
+        },
+        Notification = new Notification()
+        {
+            Title = "Hello, Title!",
+            Body = "Hello, Hello body!"
+        },
+        Topic = "test"
+    };
+    var result = await messaging.SendAsync(message);
+
 
     var app = builder.Build();
     // Configure the HTTP request pipeline.

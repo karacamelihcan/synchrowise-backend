@@ -33,10 +33,10 @@ namespace Synchrowise.API.Controllers
             return ActionResultInstance(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(UpdateUserRequest request)
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> Update(Guid Id, UpdateUserRequest request)
         {
-            var result = await _service.Update(request);
+            var result = await _service.Update(Id, request);
             return ActionResultInstance(result);
         }
 
@@ -74,10 +74,10 @@ namespace Synchrowise.API.Controllers
             var result = await _service.RemoveUserAvatar(Id);
             return ActionResultInstance(result);
         }
-        [HttpPut("Notifications")]
-        public async Task<IActionResult> UpdateNotificationSettings(UpdateNotificationRequest request)
+        [HttpPut("{Id}/Notifications")]
+        public async Task<IActionResult> UpdateNotificationSettings(Guid Id, UpdateNotificationRequest request)
         {
-            var result = await _service.UpdateNotificationSettings(request);
+            var result = await _service.UpdateNotificationSettings(Id, request);
             return ActionResultInstance(result);
         }
     }

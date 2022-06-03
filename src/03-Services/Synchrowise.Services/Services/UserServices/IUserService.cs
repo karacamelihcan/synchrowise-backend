@@ -19,10 +19,10 @@ namespace Synchrowise.Services.Services.UserServices
         Task<ApiResponse<UserDto>> AddAsync(CreateUserRequest request);
         Task<ApiResponse<NoDataDto>> Remove(Guid Id);
         Task<ApiResponse<NoDataDto>> RemoveByFirebase(string firebase);
-        Task<ApiResponse<UserDto>> Update(UpdateUserRequest request);
+        Task<ApiResponse<UserDto>> Update(Guid UserId, UpdateUserRequest request);
         Task<ApiResponse<UserAvatarDto>> UploadUserAvatar(UploadAvatarRequest request);
         Task<ApiResponse<UserAvatarDto>> RemoveUserAvatar(Guid guid);
-        Task<ApiResponse<UserDto>> UpdateNotificationSettings(UpdateNotificationRequest request);
+        Task<ApiResponse<UserDto>> UpdateNotificationSettings(Guid UserId, UpdateNotificationRequest request);
 
 
     }

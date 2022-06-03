@@ -6,9 +6,11 @@
     <UserSecretsId>db34ea76-a45f-42e1-ac82-91e3e2a27f1f</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3"/>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3"/>
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0"/>
+    <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
+    <PackageReference Include="Google.Apis.FirebaseCloudMessaging.v1" Version="1.57.0.2622" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="wwwroot\.well-known\**">
@@ -16,9 +18,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\03-Services\Synchrowise.Services\Synchrowise.Services.csproj"/>
+    <Content Update="firebase-adminsdk.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="nlog.config" CopyToOutputDirectory="PreserveNewest"/>
+    <ProjectReference Include="..\..\03-Services\Synchrowise.Services\Synchrowise.Services.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="nlog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
