@@ -51,7 +51,10 @@ namespace Synchrowise.Services.Services.GroupServices
                 {
                     return ApiResponse<GroupDto>.Fail("Group description cannot be null", 400, true);
                 }
-                if (await _repository.isGroupNameExist(request.GroupName))
+
+                var isGroupExists = (await _repository.GetGroupByName(request.GroupName) != null);
+
+                if (isGroupExists)
                 {
                     return ApiResponse<GroupDto>.Fail("Group name must be unique", 400, true);
                 }
@@ -95,24 +98,21 @@ namespace Synchrowise.Services.Services.GroupServices
             }
         }
 
-        public async Task<ApiResponse<GroupDto>> AddGroupMember(Guid GroupID, AddGroupMemberRequest request)
+        public async Task<ApiResponse<GroupDto>> AddGroupMember(Guid GroupId, AddGroupMemberRequest request)
         {
             try
             {
-                if (GroupID == Guid.Empty || request.MemberID == Guid.Empty
-                   || request.OwnerId == Guid.Empty)
+                if (GroupId != Guid.Empty || request.MemberID == Guid.Empty)
                 {
-                    return ApiResponse<GroupDto>.Fail("Group Id or Member Id cannot be null", 400, true);
+                    return ApiResponse<GroupDto>.Fail("Group Name or Member Id cannot be null", 400, true);
                 }
-                var group = await _repository.GetGroupWithRelations(GroupID);
+                var group = await _repository.GetGroupByGuid(GroupId);
+
                 if (group == null)
                 {
                     return ApiResponse<GroupDto>.Fail("There is no such a group", 404, true);
                 }
-                if (group.OwnerGuid != request.OwnerId)
-                {
-                    return ApiResponse<GroupDto>.Fail("This user not permission for this", 403, true);
-                }
+
                 var member = await _userRepo.GetByGuidAsync(request.MemberID);
                 if (member == null)
                 {
@@ -247,7 +247,7 @@ namespace Synchrowise.Services.Services.GroupServices
             }
         }
 
-        public async Task<ApiResponse<GroupDto>> GetGroupInfosByUser(Guid UserId)
+        public async Task<ApiResponse<GroupDto>> GetGroupInfoByUser(Guid UserId)
         {
             try
             {
@@ -281,6 +281,33 @@ namespace Synchrowise.Services.Services.GroupServices
                 return ApiResponse<GroupDto>.Fail(ex.Message, 500, true);
             }
         }
+
+        public async Task<ApiResponse<GroupDto>> GetGroupInfoByName(String GroupName)
+        {
+            try
+            {
+                if (GroupName == "")
+                {
+                    return ApiResponse<GroupDto>.Fail("Group Name cannot be empty", 400, true);
+                }
+
+                var group = await _repository.GetGroupByName(GroupName);
+                if (group == null)
+                {
+                    return ApiResponse<GroupDto>.Fail("Group not found by given Group Name", 404, true);
+                }
+
+                var result = CustomMapping.MappingGroup(group);
+                return ApiResponse<GroupDto>.Success(result, 200);
+
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return ApiResponse<GroupDto>.Fail(ex.Message, 500, true);
+            }
+        }
+
 
         public async Task<ApiResponse<GroupDto>> RemoveGroupMember(Guid GroupId, RemoveGroupMemberRequest request)
         {

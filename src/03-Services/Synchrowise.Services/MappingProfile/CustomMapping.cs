@@ -9,12 +9,16 @@ namespace Synchrowise.Services.MappingProfile
 {
     public static class CustomMapping
     {
-        public static GroupDto MappingGroup(Group group){
-            var groupDto = new GroupDto(){
+        public static GroupDto MappingGroup(Group group)
+        {
+
+
+            var groupDto = new GroupDto()
+            {
                 Guid = group.Guid,
                 GroupName = group.GroupName,
                 Description = group.Description,
-                GroupMemberCount = group.Users.Count,
+                GroupMemberCount = group.GroupMemberCount,
                 CreatedDate = group.CreatedDate
             };
             var groupOwner = ObjectMapper.Mapper.Map<GroupMemberDto>(group.Owner);

@@ -40,6 +40,13 @@ namespace Synchrowise.API.Controllers
             return ActionResultInstance(result);
         }
 
+        [HttpGet("Name/{GroupName}")]
+        public async Task<IActionResult> GetGroupByName(String GroupName)
+        {
+            var result = await _service.GetGroupInfoByName(GroupName);
+            return ActionResultInstance(result);
+        }
+
         [HttpPost("{Id}/Member")]
         public async Task<IActionResult> AddGroupMember(Guid Id, AddGroupMemberRequest request)
         {
@@ -56,7 +63,7 @@ namespace Synchrowise.API.Controllers
         [HttpGet("Member/Get/{Id}")]
         public async Task<IActionResult> GetGroupInfoByUser(Guid Id)
         {
-            var result = await _service.GetGroupInfosByUser(Id);
+            var result = await _service.GetGroupInfoByUser(Id);
             return ActionResultInstance(result);
         }
         [HttpPost("{Id}/File")]

@@ -7,7 +7,6 @@ namespace Synchrowise.Contract.Request.Group
 {
     public class AddGroupMemberRequest
     {
-        public Guid OwnerId { get; set; }
         public Guid MemberID { get; set; }
     }
 }

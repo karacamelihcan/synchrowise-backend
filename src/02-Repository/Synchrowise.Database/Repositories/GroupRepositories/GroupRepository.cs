@@ -70,11 +70,11 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
             return result;
         }
 
-        public async Task<bool> isGroupNameExist(string GroupName)
+        public async Task<Group> GetGroupByName(string GroupName)
         {
             var group = await _context.Groups.Where(grp => grp.GroupName.ToLower() == GroupName.ToLower() && grp.IsActive == true)
                                              .FirstOrDefaultAsync();
-            var result = group != null ? true : false;
+            var result = group;
             return result;
         }
 

@@ -10,7 +10,7 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
     public interface IGroupRepository : IRepositoryBase<Group>
     {
         Task<Group> GetGroupByGuid(Guid guid);
-        Task<bool> isGroupNameExist(string GroupName);
+        Task<Group> GetGroupByName(string GroupName);
         Task<Group> GetGroupWithRelations(Guid guid);
         Task<Group> GetGroupByOwner(Guid OwnerID);
 
