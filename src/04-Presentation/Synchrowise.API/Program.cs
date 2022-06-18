@@ -17,6 +17,7 @@ using Google.Apis.Auth.OAuth2;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Synchrowise.Services.Hubs;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -60,7 +61,7 @@ try
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
-
+    builder.Services.AddSignalR();
 
     var firebaseApp = FirebaseApp.Create(new AppOptions()
     {
@@ -106,8 +107,10 @@ try
         options.RoutePrefix = string.Empty;
     });
 
-
+    app.MapHub<SynchrowiseHub>("/socket");
     app.UseHttpsRedirection();
+
+
 
     app.UseAuthorization();
 
