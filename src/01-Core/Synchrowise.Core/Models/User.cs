@@ -45,6 +45,9 @@ namespace Synchrowise.Core.Models
         public virtual UserAvatar Avatar { get; set; }
         public NotificationSettings Notifications { get; set; }
 
+        [JsonIgnore]
+        public virtual ICollection<GroupMessage> Messages { get; set; }
+
 
     }
 }

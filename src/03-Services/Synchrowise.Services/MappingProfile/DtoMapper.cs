@@ -18,6 +18,7 @@ namespace Synchrowise.Services.MappingProfile
             CreateMap<UserAvatarDto,UserAvatar>().ReverseMap();
             CreateMap<GroupFile,GroupFileDto>().ReverseMap();
             CreateMap<NotificationSettingsDto,NotificationSettings>().ReverseMap();
+            CreateMap<GroupMessage,GroupMessageDto>().ReverseMap();
         }
     }
 }
