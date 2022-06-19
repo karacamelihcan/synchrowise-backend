@@ -62,26 +62,40 @@ namespace Synchrowise.Services.Hubs
         //Invoke after join group from api
         public async Task JoinGroup()
         {
-            var context = Context.GetHttpContext();
-
-            if (context != null)
+            try
             {
-                var guid = Guid.Parse(context.Request.Headers["guid"].ToString());
-                var user = await _userRepo.GetByGuidAsync(guid);
-                var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
+                var context = Context.GetHttpContext();
 
-                if (group != null)
+                if (context != null)
                 {
-                    await Groups.AddToGroupAsync(Context.ConnectionId, group.Guid.ToString());
+                    var guid = Guid.Parse(context.Request.Headers["guid"].ToString());
+                    var user = await _userRepo.GetByGuidAsync(guid);
+                    var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
 
-                    Dictionary<string, object> data = new Dictionary<string, object>();
+                    if (group != null)
+                    {
+                        await Groups.AddToGroupAsync(Context.ConnectionId, group.Guid.ToString());
 
-                    data["groupId"] = group.Guid.ToString();
-                    data["user"] = ObjectMapper.Mapper.Map<UserDto>(user);
+                        Dictionary<string, object> data = new Dictionary<string, object>();
+
+                        data["groupId"] = group.Guid.ToString();
+                        data["user"] = ObjectMapper.Mapper.Map<UserDto>(user);
 
 
-                    await Clients.Group(group.Guid.ToString()).SendAsync("JoinedGroup", JsonConvert.SerializeObject(data));
+                        await Clients.Group(group.Guid.ToString()).SendAsync("JoinedGroup", JsonConvert.SerializeObject(data));
+                    }
+                    else{
+                        await Clients.Caller.SendAsync("JoinGroupError","There is no such a group");
+                    }
                 }
+                else{
+                    await Clients.Caller.SendAsync("JoinGroupError","Http Context cannot be null");
+                }
+            }
+            catch (System.Exception ex)
+            {
+
+                await Clients.Caller.SendAsync("JoinGroupError",ex.Message);
             }
         }
 
@@ -122,11 +136,12 @@ namespace Synchrowise.Services.Hubs
                 if (group != null)
                 {
                     var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
-                    if(file != null){
+                    if (file != null)
+                    {
                         var result = ObjectMapper.Mapper.Map<GroupFileDto>(file);
                         await Clients.Group(group.Guid.ToString()).SendAsync("GroupFileUploaded", result);
                     }
-                    
+
                 }
             }
         }
@@ -257,7 +272,8 @@ namespace Synchrowise.Services.Hubs
             }
         }
 
-        public async Task ReceivedVideo(){
+        public async Task ReceivedVideo()
+        {
             var httpContext = Context.GetHttpContext();
             if (httpContext != null)
             {
@@ -266,7 +282,7 @@ namespace Synchrowise.Services.Hubs
                 var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
                 if (group != null)
                 {
-                    await Clients.Group(group.Guid.ToString()).SendAsync("ReadyToPlay",Context.ConnectionId);
+                    await Clients.Group(group.Guid.ToString()).SendAsync("ReadyToPlay", Context.ConnectionId);
                 }
             }
         }
