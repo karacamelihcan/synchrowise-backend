@@ -137,24 +137,87 @@ namespace Synchrowise.Services.Hubs
         public async Task GetAllMessages()
         {
             var httpContext = Context.GetHttpContext();
-                if (httpContext != null)
+            if (httpContext != null)
+            {
+                var guid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
+                var user = await _userRepo.GetByGuidAsync(guid);
+                var group = await _groupRepo.GetGroupMessages(user.GroupId);
+                if (group != null)
                 {
-                    var guid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
-                    var user = await _userRepo.GetByGuidAsync(guid);
-                    var group = await _groupRepo.GetGroupMessages(user.GroupId);
-                    if (group != null)
-                    {
-                        var result = new List<GroupMessageDto>();
+                    var result = new List<GroupMessageDto>();
 
-                        if(group.Messages.Any()){
-                            foreach (var msg in group.Messages)
-                            {   
-                                result.Add(ObjectMapper.Mapper.Map<GroupMessageDto>(msg));
-                            }
+                    if (group.Messages.Any())
+                    {
+                        foreach (var msg in group.Messages)
+                        {
+                            result.Add(ObjectMapper.Mapper.Map<GroupMessageDto>(msg));
                         }
-                        await Clients.Client(Context.ConnectionId).SendAsync("GetAllMessage", result);
                     }
+                    await Clients.Client(Context.ConnectionId).SendAsync("GetAllMessage", result);
                 }
+            }
         }
+
+        // Start Video . Send video guid that you want to start
+        public async Task StartVideo(Guid guid)
+        {
+            var httpContext = Context.GetHttpContext();
+            if (httpContext != null)
+            {
+                var userGuid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
+                var user = await _userRepo.GetByGuidAsync(guid);
+                var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
+                if (group != null)
+                {
+                    var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
+                    if(file != null){
+                        var result = ObjectMapper.Mapper.Map<GroupFileDto>(file);
+                        await Clients.Group(group.Guid.ToString()).SendAsync("StartVideo",result);
+                    } 
+                }
+            }
+        }
+
+        // Stop Video . Send video guid that you want to stop
+        public async Task StopVideo(Guid guid)
+        {
+            var httpContext = Context.GetHttpContext();
+            if (httpContext != null)
+            {
+                var userGuid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
+                var user = await _userRepo.GetByGuidAsync(guid);
+                var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
+                if (group != null)
+                {
+                    var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
+                    if(file != null){
+                        var result = ObjectMapper.Mapper.Map<GroupFileDto>(file);
+                        await Clients.Group(group.Guid.ToString()).SendAsync("StopVideo",result);
+                    } 
+                }
+            }
+        }
+        // Skip or back forward Video . Send video guid that you want to start and time ypu forward
+        public async Task SkipForwardVideo(Guid guid,TimeSpan time)
+        {
+            var httpContext = Context.GetHttpContext();
+            if (httpContext != null)
+            {
+                var userGuid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
+                var user = await _userRepo.GetByGuidAsync(guid);
+                var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
+                if (group != null)
+                {
+                    var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
+                    if(file != null){
+                        var result = ObjectMapper.Mapper.Map<GroupFileDto>(file);
+                        await Clients.Group(group.Guid.ToString()).SendAsync("SkipForward",result,time);
+                    } 
+                }
+            }
+        }
+
+
+
     }
 }
