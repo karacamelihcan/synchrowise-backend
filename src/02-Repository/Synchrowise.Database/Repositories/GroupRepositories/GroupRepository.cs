@@ -98,5 +98,14 @@ namespace Synchrowise.Database.Repositories.GroupRepositories
         {
             return _context.Groups.Where(expression);
         }
+
+        public async Task<Group> GetGroupMessages(Guid guid)
+        {
+            var group = await _context.Groups.Where(grp => grp.Guid == guid && grp.IsActive == true)
+                                             .Include(grp => grp.Messages.OrderBy(msg => msg.Time))
+                                             .FirstOrDefaultAsync();
+            return group;
+                                             
+        }
     }
 }
