@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Synchrowise.Contract.Request.Group;
 using Synchrowise.Contract.Response;
@@ -13,6 +14,7 @@ using Synchrowise.Database.Repositories.GroupFileRepositories;
 using Synchrowise.Database.Repositories.GroupRepositories;
 using Synchrowise.Database.Repositories.UserRepositories;
 using Synchrowise.Database.UnitOfWorks;
+using Synchrowise.Services.Hubs;
 using Synchrowise.Services.MappingProfile;
 using Synchrowise.Services.Services.UserServices;
 
@@ -27,7 +29,8 @@ namespace Synchrowise.Services.Services.GroupServices
         private readonly IWebHostEnvironment _environment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGroupFileRepository _fileRepository;
-        public GroupService(IGroupRepository repository, IUnitOfWork unitOfWork, IUserRepository userRepo, ILogger<GroupService> logger, IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor, IGroupFileRepository fileRepository)
+        private readonly IHubContext<SynchrowiseHub> _hubContext;
+        public GroupService(IGroupRepository repository, IUnitOfWork unitOfWork, IUserRepository userRepo, ILogger<GroupService> logger, IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor, IGroupFileRepository fileRepository, IHubContext<SynchrowiseHub> hubContext)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
@@ -36,6 +39,7 @@ namespace Synchrowise.Services.Services.GroupServices
             _environment = environment;
             _httpContextAccessor = httpContextAccessor;
             _fileRepository = fileRepository;
+            _hubContext = hubContext;
         }
 
         public async Task<ApiResponse<GroupDto>> AddAsync(CreateGroupRequest request)
@@ -81,7 +85,6 @@ namespace Synchrowise.Services.Services.GroupServices
                 owner.Group = group;
                 owner.GroupId = group.Guid;
                 owner.isHaveGroup = true;
-
                 await _repository.AddAsync(group);
                 _userRepo.Update(owner);
                 await _unitOfWork.CommitAsync();

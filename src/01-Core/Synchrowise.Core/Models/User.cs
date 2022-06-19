@@ -44,6 +44,10 @@ namespace Synchrowise.Core.Models
         public int AvatarID { get; set; }
         public virtual UserAvatar Avatar { get; set; }
         public NotificationSettings Notifications { get; set; }
+        public string SignalRConnectionId { get; set; }
+        
+        [JsonIgnore]
+        public virtual ICollection<GroupMessage> Messages { get; set; }
 
 
     }

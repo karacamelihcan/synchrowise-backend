@@ -18,7 +18,7 @@ namespace Synchrowise.Database.Configurations
             builder.Property(grp => grp.Description).IsRequired();
             builder.HasMany(x => x.Users).WithOne(x => x.Group);
             builder.HasMany(grp => grp.GroupFiles).WithOne(file => file.Group);
-
+            builder.HasMany(grp => grp.Messages).WithOne(msg => msg.Group);
         }
     }
 }

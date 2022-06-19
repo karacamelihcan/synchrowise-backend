@@ -18,6 +18,7 @@ namespace Synchrowise.Database.Configurations
 
             builder.HasOne( usr => usr.Avatar).WithOne(img => img.Owner).HasForeignKey<User>(usr => usr.AvatarID);
             builder.HasOne( usr => usr.Notifications).WithOne(ntf => ntf.Owner).HasForeignKey<User>(usr => usr.UserId);
+            builder.HasMany(usr => usr.Messages).WithOne(msg => msg.Sender);
         }
     }
 }

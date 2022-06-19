@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Synchrowise.Core.Models
 {
     public class Group
     {
+        public Group()
+        {
+            Messages = new List<GroupMessage>();
+        }
         public int Id { get; set; }
         public Guid Guid { get; set; }
         public string GroupName { get; set; }
@@ -20,6 +25,9 @@ namespace Synchrowise.Core.Models
         public User Owner { get; set; }
         public List<User> Users { get; set; }
         public List<GroupFile> GroupFiles { get; set; }
+        
+        [JsonIgnore]
+        public ICollection<GroupMessage> Messages { get; set; }
 
     }
 }
