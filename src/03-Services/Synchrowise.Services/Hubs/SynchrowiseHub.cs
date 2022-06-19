@@ -70,8 +70,6 @@ namespace Synchrowise.Services.Hubs
                 var user = await _userRepo.GetByGuidAsync(guid);
                 var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
 
-
-
                 if (group != null)
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, group.Guid.ToString());
@@ -113,22 +111,22 @@ namespace Synchrowise.Services.Hubs
 
 
         //Invoke after upload filed from api
-        public async Task UploadGroupFile()
+        public async Task UploadGroupFile(Guid guid)
         {
             var httpContext = Context.GetHttpContext();
             if (httpContext != null)
             {
-                var guid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
-                var user = await _userRepo.GetByGuidAsync(guid);
+                var userId = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
+                var user = await _userRepo.GetByGuidAsync(userId);
                 var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
                 if (group != null)
                 {
-                    var result = new List<GroupFileDto>();
-                    foreach (var file in group.GroupFiles)
-                    {
-                        result.Add(ObjectMapper.Mapper.Map<GroupFileDto>(file));
+                    var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
+                    if(file != null){
+                        var result = ObjectMapper.Mapper.Map<GroupFileDto>(file);
+                        await Clients.Group(group.Guid.ToString()).SendAsync("GroupFileUploaded", result);
                     }
-                    await Clients.Group(group.Guid.ToString()).SendAsync("GroupFileUploaded", result);
+                    
                 }
             }
         }
@@ -255,6 +253,20 @@ namespace Synchrowise.Services.Hubs
 
                         await Clients.Group(group.Guid.ToString()).SendAsync("SkipForward", JsonConvert.SerializeObject(data));
                     }
+                }
+            }
+        }
+
+        public async Task ReceivedVideo(){
+            var httpContext = Context.GetHttpContext();
+            if (httpContext != null)
+            {
+                var userGuid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
+                var user = await _userRepo.GetByGuidAsync(userGuid);
+                var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
+                if (group != null)
+                {
+                    await Clients.Group(group.Guid.ToString()).SendAsync("ReadyToPlay",Context.ConnectionId);
                 }
             }
         }
