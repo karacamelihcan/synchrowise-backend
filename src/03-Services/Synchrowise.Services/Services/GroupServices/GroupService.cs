@@ -29,7 +29,6 @@ namespace Synchrowise.Services.Services.GroupServices
         private readonly IWebHostEnvironment _environment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGroupFileRepository _fileRepository;
-        private readonly IHubContext<SynchrowiseHub> _hubContext;
         public GroupService(IGroupRepository repository, IUnitOfWork unitOfWork, IUserRepository userRepo, ILogger<GroupService> logger, IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor, IGroupFileRepository fileRepository, IHubContext<SynchrowiseHub> hubContext)
         {
             _repository = repository;
@@ -39,7 +38,6 @@ namespace Synchrowise.Services.Services.GroupServices
             _environment = environment;
             _httpContextAccessor = httpContextAccessor;
             _fileRepository = fileRepository;
-            _hubContext = hubContext;
         }
 
         public async Task<ApiResponse<GroupDto>> AddAsync(CreateGroupRequest request)
