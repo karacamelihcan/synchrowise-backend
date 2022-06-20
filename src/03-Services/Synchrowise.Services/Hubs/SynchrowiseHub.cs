@@ -76,26 +76,28 @@ namespace Synchrowise.Services.Hubs
                     {
                         await Groups.AddToGroupAsync(Context.ConnectionId, group.Guid.ToString());
 
-                       /* Dictionary<string, object> data = new Dictionary<string, object>();
+                        Dictionary<string, object> data = new Dictionary<string, object>();
 
                         data["groupId"] = group.Guid.ToString();
-                        data["user"] = ObjectMapper.Mapper.Map<UserDto>(user);*/
+                        data["user"] = ObjectMapper.Mapper.Map<UserDto>(user);
 
 
-                        await Clients.All.SendAsync("JoinedGroup", JsonConvert.SerializeObject(user),JsonConvert.SerializeObject(group.Guid));
+                        await Clients.All.SendAsync("JoinedGroup", JsonConvert.SerializeObject(data));
                     }
-                    else{
-                        await Clients.All.SendAsync("JoinGroupError","There is no such a group");
+                    else
+                    {
+                        await Clients.All.SendAsync("JoinGroupError", "There is no such a group");
                     }
                 }
-                else{
-                    await Clients.All.SendAsync("JoinGroupError","Http Context cannot be null");
+                else
+                {
+                    await Clients.All.SendAsync("JoinGroupError", "Http Context cannot be null");
                 }
             }
             catch (System.Exception ex)
             {
 
-                await Clients.All.SendAsync("JoinGroupError",ex.Message);
+                await Clients.All.SendAsync("JoinGroupError", ex.Message);
             }
         }
 
