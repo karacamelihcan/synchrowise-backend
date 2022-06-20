@@ -82,7 +82,7 @@ namespace Synchrowise.Services.Hubs
                         data["user"] = ObjectMapper.Mapper.Map<UserDto>(user);*/
 
 
-                        await Clients.All.SendAsync("JoinedGroup", "xxx");
+                        await Clients.Group(group.Guid.ToString()).SendAsync("JoinedGroup", "xxx");
                     }
                     else{
                         await Clients.All.SendAsync("JoinGroupError","There is no such a group");
