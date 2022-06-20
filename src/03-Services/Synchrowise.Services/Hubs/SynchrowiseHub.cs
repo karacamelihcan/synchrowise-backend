@@ -291,6 +291,25 @@ namespace Synchrowise.Services.Hubs
             }
         }
 
+        public async Task RemoveFromGroup(Guid userGuid){
+            var httpContext = Context.GetHttpContext();
+            if (httpContext != null)
+            {
+                var OwnerGuid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
+                var owner = await _userRepo.GetByGuidAsync(OwnerGuid);
+                var group = await _groupRepo.GetGroupWithRelations(owner.GroupId);
+                if (group != null)
+                {
+                    var removedUser = group.Users.Where(usr => usr.Guid ==userGuid).FirstOrDefault();
+                    Dictionary<string, object> data = new Dictionary<string, object>();
+
+                    data["groupId"] = group.Guid.ToString();
+                    data["user"] = ObjectMapper.Mapper.Map<UserDto>(removedUser);
+                    await Clients.All.SendAsync("RemoveFromGroup", data);
+                }
+            }
+        }
+
 
 
     }
