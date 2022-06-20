@@ -293,7 +293,8 @@ namespace Synchrowise.Services.Hubs
             }
         }
 
-        public async Task RemoveFromGroup(Guid userGuid){
+        public async Task RemoveFromGroup(Guid userGuid)
+        {
             var httpContext = Context.GetHttpContext();
             if (httpContext != null)
             {
@@ -302,17 +303,18 @@ namespace Synchrowise.Services.Hubs
                 var group = await _groupRepo.GetGroupWithRelations(owner.GroupId);
                 if (group != null)
                 {
-                    var removedUser = group.Users.Where(usr => usr.Guid ==userGuid).FirstOrDefault();
+                    var removedUser = group.Users.Where(usr => usr.Guid == userGuid).FirstOrDefault();
                     Dictionary<string, object> data = new Dictionary<string, object>();
 
                     data["groupId"] = group.Guid.ToString();
                     data["user"] = ObjectMapper.Mapper.Map<UserDto>(removedUser);
-                    await Clients.All.SendAsync("RemoveFromGroup", data);
+                    await Clients.All.SendAsync("RemovedFromGroup", data);
                 }
             }
         }
 
-        public async Task DeleteFileUploaded(){
+        public async Task DeleteFileUploaded()
+        {
             var httpContext = Context.GetHttpContext();
             if (httpContext != null)
             {
@@ -324,8 +326,8 @@ namespace Synchrowise.Services.Hubs
                     Dictionary<string, object> data = new Dictionary<string, object>();
 
                     data["groupId"] = group.Guid.ToString();
-    
-                    await Clients.All.SendAsync("DeleteFileUploaded", data);
+
+                    await Clients.All.SendAsync("GroupFileDeleted", data);
                 }
             }
         }
