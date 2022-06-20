@@ -82,20 +82,20 @@ namespace Synchrowise.Services.Hubs
                         data["user"] = ObjectMapper.Mapper.Map<UserDto>(user);
 
 
-                        await Clients.Group(group.Guid.ToString()).SendAsync("JoinedGroup", JsonConvert.SerializeObject(data));
+                        await Clients.All.SendAsync("JoinedGroup", JsonConvert.SerializeObject(data));
                     }
                     else{
-                        await Clients.Caller.SendAsync("JoinGroupError","There is no such a group");
+                        await Clients.All.SendAsync("JoinGroupError","There is no such a group");
                     }
                 }
                 else{
-                    await Clients.Caller.SendAsync("JoinGroupError","Http Context cannot be null");
+                    await Clients.All.SendAsync("JoinGroupError","Http Context cannot be null");
                 }
             }
             catch (System.Exception ex)
             {
 
-                await Clients.Caller.SendAsync("JoinGroupError",ex.Message);
+                await Clients.All.SendAsync("JoinGroupError",ex.Message);
             }
         }
 
