@@ -118,7 +118,7 @@ namespace Synchrowise.Services.Hubs
                     data["groupId"] = group.Guid.ToString();
                     data["userId"] = user.Guid.ToString();
 
-                    await Clients.Group(group.Guid.ToString()).SendAsync("LeftGroup", JsonConvert.SerializeObject(data));
+                    await Clients.All.SendAsync("LeftGroup", JsonConvert.SerializeObject(data));
                 }
             }
         }
@@ -143,7 +143,7 @@ namespace Synchrowise.Services.Hubs
 
                         data["groupId"] = group.Guid.ToString();
                         data["filePath"] = file.Path;
-                        await Clients.Group(group.Guid.ToString()).SendAsync("GroupFileUploaded", JsonConvert.SerializeObject(data));
+                        await Clients.All.SendAsync("GroupFileUploaded", JsonConvert.SerializeObject(data));
                     }
 
                 }
