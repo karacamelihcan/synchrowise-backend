@@ -139,7 +139,7 @@ namespace Synchrowise.Services.Hubs
                     if (file != null)
                     {
                         var result = ObjectMapper.Mapper.Map<GroupFileDto>(file);
-                        await Clients.Group(group.Guid.ToString()).SendAsync("GroupFileUploaded", result);
+                        await Clients.Group(group.Guid.ToString()).SendAsync("GroupFileUploaded", result.Path);
                     }
 
                 }
