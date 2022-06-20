@@ -110,7 +110,7 @@ namespace Synchrowise.Services.Hubs
                 var guid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
                 var user = await _userRepo.GetByGuidAsync(guid);
                 var group = await _groupRepo.GetGroupWithRelations(groupId);
-                
+
                 Dictionary<string, object> data = new Dictionary<string, object>();
 
                 data["groupId"] = group.Guid.ToString();
@@ -201,7 +201,7 @@ namespace Synchrowise.Services.Hubs
         }
 
         // Start Video . Send video guid that you want to start
-        public async Task PlayVideo(Guid guid, int playTimeMs)
+        public async Task PlayVideo(int playTimeMs)
         {
             var httpContext = Context.GetHttpContext();
             if (httpContext != null)
@@ -211,21 +211,20 @@ namespace Synchrowise.Services.Hubs
                 var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
                 if (group != null)
                 {
-                    var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
-                    if (file != null)
-                    {
-                        var result = new Dictionary<string, object>();
-                        result["groupId"] = group.Guid.ToString();
-                        result["playTimeMs"] = playTimeMs;
+                    //var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
 
-                        await Clients.Group(group.Guid.ToString()).SendAsync("PlayVideo", JsonConvert.SerializeObject(result));
-                    }
+                    var result = new Dictionary<string, object>();
+                    result["groupId"] = group.Guid.ToString();
+                    result["playTimeMs"] = playTimeMs;
+
+                    await Clients.Group(group.Guid.ToString()).SendAsync("PlayVideo", JsonConvert.SerializeObject(result));
+
                 }
             }
         }
 
         // Stop Video . Send video guid that you want to stop
-        public async Task StopVideo(Guid guid, int stopTimeMs)
+        public async Task StopVideo(int stopTimeMs)
         {
             var httpContext = Context.GetHttpContext();
             if (httpContext != null)
@@ -235,21 +234,19 @@ namespace Synchrowise.Services.Hubs
                 var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
                 if (group != null)
                 {
-                    var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
-                    if (file != null)
-                    {
-                        Dictionary<string, object> data = new Dictionary<string, object>();
 
-                        data["groupId"] = group.Guid.ToString();
-                        data["stopTimeMs"] = stopTimeMs;
+                    Dictionary<string, object> data = new Dictionary<string, object>();
 
-                        await Clients.Group(group.Guid.ToString()).SendAsync("StopVideo", JsonConvert.SerializeObject(data));
-                    }
+                    data["groupId"] = group.Guid.ToString();
+                    data["stopTimeMs"] = stopTimeMs;
+
+                    await Clients.Group(group.Guid.ToString()).SendAsync("StopVideo", JsonConvert.SerializeObject(data));
+
                 }
             }
         }
         // Skip or back forward Video . Send video guid that you want to start and time ypu forward
-        public async Task SkipForwardVideo(Guid guid, int forwardTimeMs)
+        public async Task SkipForwardVideo(int forwardTimeMs)
         {
             var httpContext = Context.GetHttpContext();
             if (httpContext != null)
@@ -259,16 +256,14 @@ namespace Synchrowise.Services.Hubs
                 var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
                 if (group != null)
                 {
-                    var file = group.GroupFiles.Where(file => file.Guid == guid).FirstOrDefault();
-                    if (file != null)
-                    {
-                        Dictionary<string, object> data = new Dictionary<string, object>();
 
-                        data["groupId"] = group.Guid.ToString();
-                        data["forwardTimeMs"] = forwardTimeMs;
+                    Dictionary<string, object> data = new Dictionary<string, object>();
 
-                        await Clients.Group(group.Guid.ToString()).SendAsync("SkipForward", JsonConvert.SerializeObject(data));
-                    }
+                    data["groupId"] = group.Guid.ToString();
+                    data["forwardTimeMs"] = forwardTimeMs;
+
+                    await Clients.Group(group.Guid.ToString()).SendAsync("SkipForward", JsonConvert.SerializeObject(data));
+
                 }
             }
         }
@@ -283,7 +278,7 @@ namespace Synchrowise.Services.Hubs
                 var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
                 if (group != null)
                 {
-                    await Clients.Group(group.Guid.ToString()).SendAsync("ReadyToPlay", Context.ConnectionId);
+                    await Clients.All.SendAsync("ReadyToPlay", Context.ConnectionId);
                 }
             }
         }
