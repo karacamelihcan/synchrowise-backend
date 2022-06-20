@@ -217,7 +217,7 @@ namespace Synchrowise.Services.Hubs
                     result["groupId"] = group.Guid.ToString();
                     result["playTimeMs"] = playTimeMs;
 
-                    await Clients.Group(group.Guid.ToString()).SendAsync("PlayVideo", JsonConvert.SerializeObject(result));
+                    await Clients.All.SendAsync("PlayVideo", JsonConvert.SerializeObject(result));
 
                 }
             }
@@ -240,7 +240,7 @@ namespace Synchrowise.Services.Hubs
                     data["groupId"] = group.Guid.ToString();
                     data["stopTimeMs"] = stopTimeMs;
 
-                    await Clients.Group(group.Guid.ToString()).SendAsync("StopVideo", JsonConvert.SerializeObject(data));
+                    await Clients.All.SendAsync("StopVideo", JsonConvert.SerializeObject(data));
 
                 }
             }
@@ -262,7 +262,7 @@ namespace Synchrowise.Services.Hubs
                     data["groupId"] = group.Guid.ToString();
                     data["forwardTimeMs"] = forwardTimeMs;
 
-                    await Clients.Group(group.Guid.ToString()).SendAsync("SkipForward", JsonConvert.SerializeObject(data));
+                    await Clients.All.SendAsync("SkipForward", JsonConvert.SerializeObject(data));
 
                 }
             }
