@@ -102,26 +102,21 @@ namespace Synchrowise.Services.Hubs
         }
 
         //Invoke before left group from api
-        public async Task LeaveGroup()
+        public async Task LeaveGroup(Guid groupId)
         {
             var httpContext = Context.GetHttpContext();
             if (httpContext != null)
             {
                 var guid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
                 var user = await _userRepo.GetByGuidAsync(guid);
-                var group = await _groupRepo.GetGroupWithRelations(user.GroupId);
-                if (group != null)
-                {
-                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, group.Guid.ToString());
+                var group = await _groupRepo.GetGroupWithRelations(groupId);
+                
+                Dictionary<string, object> data = new Dictionary<string, object>();
 
+                data["groupId"] = group.Guid.ToString();
+                data["userId"] = user.Guid.ToString();
 
-                    Dictionary<string, object> data = new Dictionary<string, object>();
-
-                    data["groupId"] = group.Guid.ToString();
-                    data["userId"] = user.Guid.ToString();
-
-                    await Clients.All.SendAsync("LeftGroup", JsonConvert.SerializeObject(data));
-                }
+                await Clients.All.SendAsync("LeftGroup", JsonConvert.SerializeObject(data));
             }
         }
 
