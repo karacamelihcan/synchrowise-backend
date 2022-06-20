@@ -310,6 +310,23 @@ namespace Synchrowise.Services.Hubs
             }
         }
 
+        public async Task DeleteFileUploaded(){
+            var httpContext = Context.GetHttpContext();
+            if (httpContext != null)
+            {
+                var OwnerGuid = Guid.Parse(httpContext.Request.Headers["guid"].ToString());
+                var owner = await _userRepo.GetByGuidAsync(OwnerGuid);
+                var group = await _groupRepo.GetGroupWithRelations(owner.GroupId);
+                if (group != null)
+                {
+                    Dictionary<string, object> data = new Dictionary<string, object>();
+
+                    data["groupId"] = group.Guid.ToString();
+    
+                    await Clients.All.SendAsync("DeleteFileUploaded", data);
+                }
+            }
+        }
 
 
     }
